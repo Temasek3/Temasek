@@ -1,0 +1,13 @@
+@Temasek.WebApi_HostAddress = http://localhost:5149
+
+#if (EnableOpenAPI)
+GET {{Temasek.WebApi_HostAddress}}/openapi/v1.json
+Accept: application/json
+
+###
+#endif
+
+GET {{Temasek.WebApi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

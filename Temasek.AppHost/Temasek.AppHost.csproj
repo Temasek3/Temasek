@@ -8,4 +8,8 @@
     <UserSecretsId>0511e1e6-b19d-4929-a444-79687b78d830</UserSecretsId>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Temasek.WebApi\Temasek.WebApi.csproj" />
+  </ItemGroup>
+
 </Project>
