@@ -1,45 +1,71 @@
+using FastEndpoints;
+using FastEndpoints.Swagger;
+using Microsoft.AspNetCore.Authentication;
+using Scalar.AspNetCore;
+using Temasek.WebApi.Clerk;
+using Temasek.WebApi.Features.Calendarr;
+using Temasek.WebApi.Features.Facilities;
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.AddServiceDefaults();
 
-// Add services to the container.
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
+builder.Services.AddOptions<ClerkOptions>().Bind(
+    builder.Configuration.GetSection("Clerk")
+);
+
+builder.Services.AddOptions<FacilitiesOptions>().Bind(
+    builder.Configuration.GetSection("Facilities")
+);
+
+builder.Services.AddOptions<CalendarrOptions>().Bind(
+    builder.Configuration.GetSection("Calendarr")
+);
+
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(policy =>
+    {
+        if (builder.Environment.IsDevelopment())
+        {
+            policy.WithOrigins("http://localhost:3000", "http://localhost:5173");
+        }
+        else
+        {
+            policy.WithOrigins("https://temasek3.cc");
+        }
+
+        policy.AllowAnyMethod()
+              .AllowAnyHeader()
+              .AllowCredentials();
+    });
+});
+
+builder.Services.AddFastEndpoints();
+builder.Services.SwaggerDocument();
+builder.Services.AddAuthorization();
+builder.Services
+    .AddAuthentication(ClerkAuthenticationHandler.SchemeName)
+    .AddScheme<AuthenticationSchemeOptions, ClerkAuthenticationHandler>(
+        ClerkAuthenticationHandler.SchemeName,
+        null
+    );
+
 
 var app = builder.Build();
 
-app.MapDefaultEndpoints();
-
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+app.UseSwaggerGen(options =>
 {
-    app.MapOpenApi();
-}
+    options.Path = "/openapi/{documentName}.json";
+});
 
+app.UseCors();
 app.UseHttpsRedirection();
+app.UseAuthentication();
+app.UseAuthorization();
+app.UseFastEndpoints();
 
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
-
-app.MapGet("/weatherforecast", () =>
-{
-    var forecast =  Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast");
+app.MapDefaultEndpoints();
+app.MapScalarApiReference();
 
 app.Run();
-
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}

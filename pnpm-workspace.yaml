@@ -1,2 +1,10 @@
 packages:
   - Temasek.WebApp/
+
+onlyBuiltDependencies:
+  - '@clerk/shared'
+  - '@parcel/watcher'
+  - better-sqlite3
+  - esbuild
+  - sharp
+  - vue-demi
