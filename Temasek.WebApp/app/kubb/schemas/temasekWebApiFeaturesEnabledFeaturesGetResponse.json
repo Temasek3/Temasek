@@ -1,0 +1,1 @@
+{"type":"object","additionalProperties":false,"properties":{"IsFacilitiesEnabled":{"type":"boolean"},"IsCalendarrEnabled":{"type":"boolean"}},"x-readme-ref-name":"TemasekWebApiFeaturesEnabledFeaturesGetResponse"}

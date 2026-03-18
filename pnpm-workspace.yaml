@@ -5,6 +5,8 @@ onlyBuiltDependencies:
   - '@clerk/shared'
   - '@parcel/watcher'
   - better-sqlite3
+  - es5-ext
   - esbuild
+  - msw
   - sharp
   - vue-demi

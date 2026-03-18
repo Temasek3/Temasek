@@ -1,17 +1,15 @@
-<template>
-    <UApp>
-        <ClerkLoaded>
-            <Show when="signed-out">
-                <div class="flex min-h-screen items-center justify-center bg-orange-50 p-4">
-                    <SignIn />
-                </div>
-            </Show>
+<script setup lang="ts">
+import { VueQueryDevtools } from '@tanstack/vue-query-devtools'
+</script>
 
-            <Show when="signed-in">
-                <NuxtLayout>
-                    <NuxtPage />
-                </NuxtLayout>
-            </Show>
-        </ClerkLoaded>
-    </UApp>
+<template>
+  <UApp>
+    <DevOnly>
+      <VueQueryDevtools />
+    </DevOnly>
+
+    <NuxtLayout>
+      <NuxtPage />
+    </NuxtLayout>
+  </UApp>
 </template>
