@@ -87,7 +87,8 @@ jobs:
               -e CLERK__SECRET_KEY="${{ vars.CLERK__SECRET_KEY }}" \
               -e FORMSG__CALLBACK_API_KEY="${{ secrets.FORMSG__CALLBACK_API_KEY }}" \
               -e FORMSG__SECRET_KEY="${{ secrets.FORMSG__SECRET_KEY }}" \
+              -e FORMSG__FORM_ID="${{ vars.FORMSG__FORM_ID }}" \
+              -e FORMSG__PREFILL_FIELD_ID="${{ vars.FORMSG__PREFILL_FIELD_ID }}" \
               -e FACILITIES__ENABLED="${{ vars.FACILITIES__ENABLED }}" \
-              -e FACILITIES__SERVICE_ACCOUNT_JSON_CREDENTIAL="${{ secrets.FACILITIES__SERVICE_ACCOUNT_JSON_CREDENTIAL }}" \
             	-e ASPNETCORE_FORWARDEDHEADERS_ENABLED="true" \
             	ghcr.io/temasek3/temasek-webapi:master;

@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Options;
 using Scalar.AspNetCore;
 using Temasek.WebApi.Clerk;
-using Temasek.WebApi.Features.Calendarr;
 using Temasek.WebApi.Features.Facilities;
 using Temasek.WebApi.Features.FormSg;
 
@@ -18,7 +17,6 @@ builder.Services.AddOptions<FormSgOptions>().Bind(builder.Configuration.GetSecti
 builder
     .Services.AddOptions<FacilitiesOptions>()
     .Bind(builder.Configuration.GetSection("Facilities"));
-builder.Services.AddOptions<CalendarrOptions>().Bind(builder.Configuration.GetSection("Calendarr"));
 
 builder.Services.AddSingleton(sp =>
 {
