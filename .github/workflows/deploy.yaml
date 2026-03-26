@@ -81,6 +81,6 @@ jobs:
             podman pull ghcr.io/temasek3/temasek-webapi:master;
             podman run -d --restart=unless-stopped \
             	--name temasek-webapi \
-            	-p 8000:8080 \
+            	-p 9000:8080 \
             	-e ASPNETCORE_FORWARDEDHEADERS_ENABLED="true" \
             	ghcr.io/temasek3/temasek-webapi:master;
