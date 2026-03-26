@@ -2,13 +2,9 @@ name: Deploy
 
 on:
   push:
-    paths:
-      - "Temasek.WebApi/**"
     branches: ["master", "wip"]
 
   pull_request:
-    paths:
-      - "Temasek.WebApi/**"
     branches: ["master"]
 
 env:
