@@ -85,7 +85,7 @@ jobs:
 
               -e CONNECTIONSTRINGS__TEMASEK=${{ secrets.CONNECTIONSTRINGS__TEMASEK }} \
               -e CLERK__AUTHORIZED_PARTIES=${{ vars.CLERK__AUTHORIZED_PARTIES }} \
-              -e CLERK__SECRET_KEY=${{ vars.CLERK__SECRET_KEY }}
+              -e CLERK__SECRET_KEY=${{ vars.CLERK__SECRET_KEY }} \
               -e FORMSG__CALLBACK_API_KEY=${{ secrets.FORMSG__CALLBACK_API_KEY }} \
               -e FORMSG__SECRET_KEY=${{ secrets.FORMSG__SECRET_KEY }} \
 
