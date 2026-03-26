@@ -12,7 +12,7 @@ env:
   IMAGE_NAME: temasek3/temasek-webapi
 
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
     
     environment: production
