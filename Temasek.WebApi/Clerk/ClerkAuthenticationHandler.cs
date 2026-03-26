@@ -1,7 +1,7 @@
-﻿using Clerk.BackendAPI.Helpers.Jwks;
+﻿using System.Text.Encodings.Web;
+using Clerk.BackendAPI.Helpers.Jwks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Options;
-using System.Text.Encodings.Web;
 
 namespace Temasek.WebApi.Clerk;
 

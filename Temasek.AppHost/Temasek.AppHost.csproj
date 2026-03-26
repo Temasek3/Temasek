@@ -1,19 +1,19 @@
-<Project Sdk="Aspire.AppHost.Sdk/13.1.2">
-
+<Project Sdk="Aspire.AppHost.Sdk/13.2.0">
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net10.0</TargetFramework>
+    <TargetFramework>net11.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <UserSecretsId>0511e1e6-b19d-4929-a444-79687b78d830</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Aspire.Hosting.JavaScript" Version="13.1.2" />
+    <PackageReference Include="Aspire.Hosting.Docker" Version="13.2.0" />
+    <PackageReference Include="Aspire.Hosting.JavaScript" Version="13.2.0" />
+    <PackageReference Include="Aspire.Hosting.MySql" Version="13.2.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Temasek.WebApi\Temasek.WebApi.csproj" />
   </ItemGroup>
-
 </Project>

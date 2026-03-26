@@ -8,9 +8,9 @@ export type TemasekWebApiFeaturesEnabledFeaturesGetResponse = {
     /**
      * @type boolean | undefined
     */
-    IsFacilitiesEnabled?: boolean;
+    isFacilitiesEnabled?: boolean;
     /**
      * @type boolean | undefined
     */
-    IsCalendarrEnabled?: boolean;
+    isCalendarrEnabled?: boolean;
 };

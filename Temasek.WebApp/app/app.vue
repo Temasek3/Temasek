@@ -8,6 +8,7 @@ import { VueQueryDevtools } from '@tanstack/vue-query-devtools'
       <VueQueryDevtools />
     </DevOnly>
 
+    <NuxtLoadingIndicator />
     <NuxtLayout>
       <NuxtPage />
     </NuxtLayout>

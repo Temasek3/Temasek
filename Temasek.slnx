@@ -4,5 +4,6 @@
   </Folder>
   <Project Path="Temasek.AppHost/Temasek.AppHost.csproj" />
   <Project Path="Temasek.ServiceDefaults/Temasek.ServiceDefaults.csproj" />
+  <Project Path="Temasek.Tests/Temasek.Tests.csproj" />
   <Project Path="Temasek.WebApi/Temasek.WebApi.csproj" />
 </Solution>

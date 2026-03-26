@@ -42,6 +42,7 @@
     "tailwindcss": "^4.2.1",
     "typescript": "^5.9.3",
     "vue": "^3.5.30",
+    "vue-cal": "5.0.1-rc.40",
     "vue-router": "^5.0.3",
     "zod": "^4.3.6"
   }

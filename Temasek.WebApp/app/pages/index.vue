@@ -5,7 +5,19 @@ const x = useTemasekWebApiFeaturesEnabledFeaturesGetEndpoint()
 </script>
 
 <template>
-  <div>
-    {{ x }}
-  </div>
+  <UDashboardPanel id="index">
+    <template #header>
+      <UDashboardNavbar title="Temasek3" :ui="{ right: 'gap-3' }">
+        <template #leading>
+          <UDashboardSidebarCollapse />
+        </template>
+      </UDashboardNavbar>
+    </template>
+
+    <template #body>
+      <div class="flex flex-col w-full flex-1">
+        fuck
+      </div>
+    </template>
+  </UDashboardPanel>
 </template>
