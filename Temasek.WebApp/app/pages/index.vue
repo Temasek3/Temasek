@@ -16,7 +16,7 @@ const x = useTemasekWebApiFeaturesEnabledFeaturesGetEndpoint()
 
     <template #body>
       <div class="flex flex-col w-full flex-1">
-        fuck
+        Temasek!
       </div>
     </template>
   </UDashboardPanel>
