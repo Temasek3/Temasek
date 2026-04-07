@@ -1,8 +1,8 @@
-import { addMinutes, compareAsc, differenceInMinutes, format, isMatch, parse, startOfMinute } from 'date-fns'
 import type {
   TemasekWebApiFeaturesRoomsSignboardContractsRoomSignboardResponse as RoomSignboardSnapshotContract,
   TemasekWebApiFeaturesRoomsSignboardContractsSignboardActivityDto as SignboardActivityContract,
 } from '~/kubb'
+import { addMinutes, compareAsc, differenceInMinutes, format, isMatch, parse, startOfMinute } from 'date-fns'
 
 type RequiredActivityKeys = 'id' | 'title' | 'start' | 'end' | 'personnel' | 'location'
 

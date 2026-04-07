@@ -4,7 +4,7 @@ import { useTemasekWebApiFeaturesEnabledFeaturesGetEndpoint } from '~/kubb'
 
 const route = useRoute()
 
-const { data, isPending } = useTemasekWebApiFeaturesEnabledFeaturesGetEndpoint()
+const { data } = useTemasekWebApiFeaturesEnabledFeaturesGetEndpoint()
 const open = ref(false)
 
 const links = computed(() => [

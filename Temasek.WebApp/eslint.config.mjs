@@ -6,5 +6,6 @@ export default antfu(
     ignores: [
       './app/kubb',
     ],
+    stylistic: true,
   },
 )

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useTemasekWebApiFeaturesEnabledFeaturesGetEndpoint } from '~/kubb'
 
-const x = useTemasekWebApiFeaturesEnabledFeaturesGetEndpoint()
+const _ = useTemasekWebApiFeaturesEnabledFeaturesGetEndpoint()
 </script>
 
 <template>

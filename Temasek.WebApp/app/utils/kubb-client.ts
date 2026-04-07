@@ -11,8 +11,8 @@ export type RequestConfig<TData = unknown> = BaseRequestConfig<TData> & {
   auth?: KubbAuthMode
 }
 
-export type Client = <TResponseData, TError = unknown, TRequestData = unknown>(
-  config: RequestConfig<TRequestData>
+export type Client = <TResponseData, _TError = unknown, TRequestData = unknown>(
+  config: RequestConfig<TRequestData>,
 ) => Promise<ResponseConfig<TResponseData>>
 
 function normalizeHeaders(headers?: BaseRequestConfig['headers']): Record<string, string> {
@@ -105,4 +105,4 @@ export const authenticatedKubbClient: Client = async config => kubbClient({
 
 export default kubbClient
 
-export type { ResponseErrorConfig, ResponseConfig }
+export type { ResponseConfig, ResponseErrorConfig }
