@@ -6,7 +6,68 @@ namespace Temasek.WebApi.Features.Rooms.Signboard;
 
 public class RoomSignboardStore(IFreeSql sql)
 {
+    public sealed class RoomSummary
+    {
+        public string RoomId { get; set; } = string.Empty;
+
+        public string Name { get; set; } = string.Empty;
+
+        public int ScheduleCount { get; set; }
+
+        public DateTime UpdatedAtUtc { get; set; }
+    }
+
     private static readonly JsonSerializerOptions JsonOptions = new(JsonSerializerDefaults.Web);
+
+    public async Task<IReadOnlyList<RoomSummary>> ListAsync(CancellationToken ct)
+    {
+        var rooms = await sql.Select<RoomSignboard>().OrderBy(item => item.Name).ToListAsync(ct);
+
+        return rooms
+            .Select(item =>
+            {
+                var roomId = NormalizeRoomId(item.RoomId);
+                var roomName = NormalizeName(item.Name, null, roomId);
+
+                return new RoomSummary
+                {
+                    RoomId = roomId,
+                    Name = roomName,
+                    ScheduleCount = DeserializeSchedule(item.ScheduleJson).Count,
+                    UpdatedAtUtc = item.UpdatedAtUtc,
+                };
+            })
+            .ToArray();
+    }
+
+    public async Task<(RoomSignboardResponse Room, bool Created)> CreateAsync(
+        string roomId,
+        string? name,
+        CancellationToken ct
+    )
+    {
+        var normalizedRoomId = NormalizeRoomId(roomId);
+        var existing = await sql.Select<RoomSignboard>()
+            .Where(item => item.RoomId == normalizedRoomId)
+            .FirstAsync(ct);
+
+        if (existing is not null)
+        {
+            return (ToResponse(existing, normalizedRoomId), false);
+        }
+
+        var roomSignboard = new RoomSignboard
+        {
+            RoomId = normalizedRoomId,
+            Name = NormalizeName(name, null, normalizedRoomId),
+            ScheduleJson = "[]",
+            UpdatedAtUtc = DateTime.UtcNow,
+        };
+
+        await sql.Insert(roomSignboard).ExecuteAffrowsAsync(ct);
+
+        return (ToResponse(roomSignboard, normalizedRoomId), true);
+    }
 
     public async Task<RoomSignboardResponse> GetAsync(string roomId, CancellationToken ct)
     {
