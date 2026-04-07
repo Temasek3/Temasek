@@ -3,5 +3,4 @@
 public class Response
 {
     public bool IsFacilitiesEnabled { get; set; }
-    public bool IsCalendarrEnabled { get; set; }
 }

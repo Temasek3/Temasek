@@ -14,6 +14,5 @@ public class EnabledFeaturesEndpointTests(AppFixture fixture)
 
         await Assert.That(response).IsNotNull();
         await Assert.That(response!.IsFacilitiesEnabled).IsTypeOf<bool>();
-        await Assert.That(response.IsCalendarrEnabled).IsTypeOf<bool>();
     }
 }
