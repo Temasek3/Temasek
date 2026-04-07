@@ -36,7 +36,7 @@ const SPRITE_ROWS = [
   '......oo......oo........',
 ] as const
 
-const PIXEL_SIZE = 4
+const PIXEL_SIZE = 5
 
 const palette: Record<string, string> = {
   d: '#21301e',
