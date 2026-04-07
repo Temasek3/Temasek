@@ -177,7 +177,7 @@ watch(() => props.trigger, (next, prev) => {
   if (next && !prev) {
     triggerNow()
   }
-})
+}, { immediate: true })
 
 onBeforeUnmount(() => {
   clearTimers()
