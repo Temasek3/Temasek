@@ -1,1 +1,1 @@
-{"type":"object","additionalProperties":false,"required":["isFacilitiesEnabled","isCalendarrEnabled"],"properties":{"isFacilitiesEnabled":{"type":"boolean"},"isCalendarrEnabled":{"type":"boolean"}},"x-readme-ref-name":"TemasekWebApiFeaturesEnabledFeaturesGetResponse"}
+{"type":"object","additionalProperties":false,"required":["isFacilitiesEnabled"],"properties":{"isFacilitiesEnabled":{"type":"boolean"}},"x-readme-ref-name":"TemasekWebApiFeaturesEnabledFeaturesGetResponse"}

@@ -3,6 +3,8 @@ export type { TemasekWebApiFeaturesFormSgCallbackEndpointMutationKey } from "./h
 export type { TemasekWebApiFeaturesFormSgValidateEndpointQueryKey } from "./hooks/useTemasekWebApiFeaturesFormSgValidateEndpoint.ts";
 export type { TemasekWebApiFeaturesIndexGetEndpointQueryKey } from "./hooks/useTemasekWebApiFeaturesIndexGetEndpoint.ts";
 export type { TemasekWebApiFeaturesPokedexListEndpointQueryKey } from "./hooks/useTemasekWebApiFeaturesPokedexListEndpoint.ts";
+export type { TemasekWebApiFeaturesRoomsCreateEndpointMutationKey } from "./hooks/useTemasekWebApiFeaturesRoomsCreateEndpoint.ts";
+export type { TemasekWebApiFeaturesRoomsListEndpointQueryKey } from "./hooks/useTemasekWebApiFeaturesRoomsListEndpoint.ts";
 export type { TemasekWebApiFeaturesRoomsSignboardGetEndpointQueryKey } from "./hooks/useTemasekWebApiFeaturesRoomsSignboardGetEndpoint.ts";
 export type { TemasekWebApiFeaturesRoomsSignboardStreamEndpointQueryKey } from "./hooks/useTemasekWebApiFeaturesRoomsSignboardStreamEndpoint.ts";
 export type { TemasekWebApiFeaturesRoomsSignboardUpdateEndpointMutationKey } from "./hooks/useTemasekWebApiFeaturesRoomsSignboardUpdateEndpoint.ts";
@@ -14,6 +16,11 @@ export type { TemasekWebApiFeaturesFormSgValidateEndpoint200, TemasekWebApiFeatu
 export type { TemasekWebApiFeaturesFormSgValidateResponse } from "./types/TemasekWebApiFeaturesFormSgValidateResponse.ts";
 export type { TemasekWebApiFeaturesIndexGetEndpoint204, TemasekWebApiFeaturesIndexGetEndpointQuery, TemasekWebApiFeaturesIndexGetEndpointQueryResponse } from "./types/TemasekWebApiFeaturesIndexGetEndpoint.ts";
 export type { TemasekWebApiFeaturesPokedexListEndpoint204, TemasekWebApiFeaturesPokedexListEndpoint401, TemasekWebApiFeaturesPokedexListEndpointQuery, TemasekWebApiFeaturesPokedexListEndpointQueryResponse } from "./types/TemasekWebApiFeaturesPokedexListEndpoint.ts";
+export type { TemasekWebApiFeaturesRoomsCreateEndpoint200, TemasekWebApiFeaturesRoomsCreateEndpointMutation, TemasekWebApiFeaturesRoomsCreateEndpointMutationRequest, TemasekWebApiFeaturesRoomsCreateEndpointMutationResponse } from "./types/TemasekWebApiFeaturesRoomsCreateEndpoint.ts";
+export type { TemasekWebApiFeaturesRoomsCreateRequest } from "./types/TemasekWebApiFeaturesRoomsCreateRequest.ts";
+export type { TemasekWebApiFeaturesRoomsCreateResponse } from "./types/TemasekWebApiFeaturesRoomsCreateResponse.ts";
+export type { TemasekWebApiFeaturesRoomsListEndpoint200, TemasekWebApiFeaturesRoomsListEndpointQuery, TemasekWebApiFeaturesRoomsListEndpointQueryResponse } from "./types/TemasekWebApiFeaturesRoomsListEndpoint.ts";
+export type { TemasekWebApiFeaturesRoomsListResponse } from "./types/TemasekWebApiFeaturesRoomsListResponse.ts";
 export type { TemasekWebApiFeaturesRoomsSignboardContractsRoomSignboardResponse } from "./types/TemasekWebApiFeaturesRoomsSignboardContractsRoomSignboardResponse.ts";
 export type { TemasekWebApiFeaturesRoomsSignboardContractsSignboardActivityDto } from "./types/TemasekWebApiFeaturesRoomsSignboardContractsSignboardActivityDto.ts";
 export type { TemasekWebApiFeaturesRoomsSignboardGetEndpoint200, TemasekWebApiFeaturesRoomsSignboardGetEndpointPathParams, TemasekWebApiFeaturesRoomsSignboardGetEndpointQuery, TemasekWebApiFeaturesRoomsSignboardGetEndpointQueryResponse } from "./types/TemasekWebApiFeaturesRoomsSignboardGetEndpoint.ts";
@@ -25,6 +32,8 @@ export { temasekWebApiFeaturesFormSgCallbackEndpointHandler, temasekWebApiFeatur
 export { temasekWebApiFeaturesFormSgValidateEndpointHandler, temasekWebApiFeaturesFormSgValidateEndpointHandlerResponse200, temasekWebApiFeaturesFormSgValidateEndpointHandlerResponse401 } from "./handlers/temasekWebApiFeaturesFormSgValidateEndpointHandler.ts";
 export { temasekWebApiFeaturesIndexGetEndpointHandler, temasekWebApiFeaturesIndexGetEndpointHandlerResponse204 } from "./handlers/temasekWebApiFeaturesIndexGetEndpointHandler.ts";
 export { temasekWebApiFeaturesPokedexListEndpointHandler, temasekWebApiFeaturesPokedexListEndpointHandlerResponse204, temasekWebApiFeaturesPokedexListEndpointHandlerResponse401 } from "./handlers/temasekWebApiFeaturesPokedexListEndpointHandler.ts";
+export { temasekWebApiFeaturesRoomsCreateEndpointHandler, temasekWebApiFeaturesRoomsCreateEndpointHandlerResponse200 } from "./handlers/temasekWebApiFeaturesRoomsCreateEndpointHandler.ts";
+export { temasekWebApiFeaturesRoomsListEndpointHandler, temasekWebApiFeaturesRoomsListEndpointHandlerResponse200 } from "./handlers/temasekWebApiFeaturesRoomsListEndpointHandler.ts";
 export { temasekWebApiFeaturesRoomsSignboardGetEndpointHandler, temasekWebApiFeaturesRoomsSignboardGetEndpointHandlerResponse200 } from "./handlers/temasekWebApiFeaturesRoomsSignboardGetEndpointHandler.ts";
 export { temasekWebApiFeaturesRoomsSignboardStreamEndpointHandler, temasekWebApiFeaturesRoomsSignboardStreamEndpointHandlerResponse204 } from "./handlers/temasekWebApiFeaturesRoomsSignboardStreamEndpointHandler.ts";
 export { temasekWebApiFeaturesRoomsSignboardUpdateEndpointHandler, temasekWebApiFeaturesRoomsSignboardUpdateEndpointHandlerResponse200 } from "./handlers/temasekWebApiFeaturesRoomsSignboardUpdateEndpointHandler.ts";
@@ -47,6 +56,13 @@ export { temasekWebApiFeaturesPokedexListEndpoint } from "./hooks/useTemasekWebA
 export { temasekWebApiFeaturesPokedexListEndpointQueryKey } from "./hooks/useTemasekWebApiFeaturesPokedexListEndpoint.ts";
 export { temasekWebApiFeaturesPokedexListEndpointQueryOptions } from "./hooks/useTemasekWebApiFeaturesPokedexListEndpoint.ts";
 export { useTemasekWebApiFeaturesPokedexListEndpoint } from "./hooks/useTemasekWebApiFeaturesPokedexListEndpoint.ts";
+export { temasekWebApiFeaturesRoomsCreateEndpoint } from "./hooks/useTemasekWebApiFeaturesRoomsCreateEndpoint.ts";
+export { temasekWebApiFeaturesRoomsCreateEndpointMutationKey } from "./hooks/useTemasekWebApiFeaturesRoomsCreateEndpoint.ts";
+export { useTemasekWebApiFeaturesRoomsCreateEndpoint } from "./hooks/useTemasekWebApiFeaturesRoomsCreateEndpoint.ts";
+export { temasekWebApiFeaturesRoomsListEndpoint } from "./hooks/useTemasekWebApiFeaturesRoomsListEndpoint.ts";
+export { temasekWebApiFeaturesRoomsListEndpointQueryKey } from "./hooks/useTemasekWebApiFeaturesRoomsListEndpoint.ts";
+export { temasekWebApiFeaturesRoomsListEndpointQueryOptions } from "./hooks/useTemasekWebApiFeaturesRoomsListEndpoint.ts";
+export { useTemasekWebApiFeaturesRoomsListEndpoint } from "./hooks/useTemasekWebApiFeaturesRoomsListEndpoint.ts";
 export { temasekWebApiFeaturesRoomsSignboardGetEndpoint } from "./hooks/useTemasekWebApiFeaturesRoomsSignboardGetEndpoint.ts";
 export { temasekWebApiFeaturesRoomsSignboardGetEndpointQueryKey } from "./hooks/useTemasekWebApiFeaturesRoomsSignboardGetEndpoint.ts";
 export { temasekWebApiFeaturesRoomsSignboardGetEndpointQueryOptions } from "./hooks/useTemasekWebApiFeaturesRoomsSignboardGetEndpoint.ts";
@@ -66,6 +82,11 @@ export { createTemasekWebApiFeaturesFormSgValidateEndpoint200, createTemasekWebA
 export { createTemasekWebApiFeaturesFormSgValidateResponse } from "./mocks/createTemasekWebApiFeaturesFormSgValidateResponse.ts";
 export { createTemasekWebApiFeaturesIndexGetEndpoint204, createTemasekWebApiFeaturesIndexGetEndpointQueryResponse } from "./mocks/createTemasekWebApiFeaturesIndexGetEndpoint.ts";
 export { createTemasekWebApiFeaturesPokedexListEndpoint204, createTemasekWebApiFeaturesPokedexListEndpoint401, createTemasekWebApiFeaturesPokedexListEndpointQueryResponse } from "./mocks/createTemasekWebApiFeaturesPokedexListEndpoint.ts";
+export { createTemasekWebApiFeaturesRoomsCreateEndpoint200, createTemasekWebApiFeaturesRoomsCreateEndpointMutationRequest, createTemasekWebApiFeaturesRoomsCreateEndpointMutationResponse } from "./mocks/createTemasekWebApiFeaturesRoomsCreateEndpoint.ts";
+export { createTemasekWebApiFeaturesRoomsCreateRequest } from "./mocks/createTemasekWebApiFeaturesRoomsCreateRequest.ts";
+export { createTemasekWebApiFeaturesRoomsCreateResponse } from "./mocks/createTemasekWebApiFeaturesRoomsCreateResponse.ts";
+export { createTemasekWebApiFeaturesRoomsListEndpoint200, createTemasekWebApiFeaturesRoomsListEndpointQueryResponse } from "./mocks/createTemasekWebApiFeaturesRoomsListEndpoint.ts";
+export { createTemasekWebApiFeaturesRoomsListResponse } from "./mocks/createTemasekWebApiFeaturesRoomsListResponse.ts";
 export { createTemasekWebApiFeaturesRoomsSignboardContractsRoomSignboardResponse } from "./mocks/createTemasekWebApiFeaturesRoomsSignboardContractsRoomSignboardResponse.ts";
 export { createTemasekWebApiFeaturesRoomsSignboardContractsSignboardActivityDto } from "./mocks/createTemasekWebApiFeaturesRoomsSignboardContractsSignboardActivityDto.ts";
 export { createTemasekWebApiFeaturesRoomsSignboardGetEndpoint200, createTemasekWebApiFeaturesRoomsSignboardGetEndpointPathParams, createTemasekWebApiFeaturesRoomsSignboardGetEndpointQueryResponse } from "./mocks/createTemasekWebApiFeaturesRoomsSignboardGetEndpoint.ts";
@@ -80,6 +101,11 @@ export { temasekWebApiFeaturesFormSgValidateEndpoint200Schema, temasekWebApiFeat
 export { temasekWebApiFeaturesFormSgValidateResponseSchema } from "./zod/temasekWebApiFeaturesFormSgValidateResponseSchema.ts";
 export { temasekWebApiFeaturesIndexGetEndpoint204Schema, temasekWebApiFeaturesIndexGetEndpointQueryResponseSchema } from "./zod/temasekWebApiFeaturesIndexGetEndpointSchema.ts";
 export { temasekWebApiFeaturesPokedexListEndpoint204Schema, temasekWebApiFeaturesPokedexListEndpoint401Schema, temasekWebApiFeaturesPokedexListEndpointQueryResponseSchema } from "./zod/temasekWebApiFeaturesPokedexListEndpointSchema.ts";
+export { temasekWebApiFeaturesRoomsCreateEndpoint200Schema, temasekWebApiFeaturesRoomsCreateEndpointMutationRequestSchema, temasekWebApiFeaturesRoomsCreateEndpointMutationResponseSchema } from "./zod/temasekWebApiFeaturesRoomsCreateEndpointSchema.ts";
+export { temasekWebApiFeaturesRoomsCreateRequestSchema } from "./zod/temasekWebApiFeaturesRoomsCreateRequestSchema.ts";
+export { temasekWebApiFeaturesRoomsCreateResponseSchema } from "./zod/temasekWebApiFeaturesRoomsCreateResponseSchema.ts";
+export { temasekWebApiFeaturesRoomsListEndpoint200Schema, temasekWebApiFeaturesRoomsListEndpointQueryResponseSchema } from "./zod/temasekWebApiFeaturesRoomsListEndpointSchema.ts";
+export { temasekWebApiFeaturesRoomsListResponseSchema } from "./zod/temasekWebApiFeaturesRoomsListResponseSchema.ts";
 export { temasekWebApiFeaturesRoomsSignboardContractsRoomSignboardResponseSchema } from "./zod/temasekWebApiFeaturesRoomsSignboardContractsRoomSignboardResponseSchema.ts";
 export { temasekWebApiFeaturesRoomsSignboardContractsSignboardActivityDtoSchema } from "./zod/temasekWebApiFeaturesRoomsSignboardContractsSignboardActivityDtoSchema.ts";
 export { temasekWebApiFeaturesRoomsSignboardGetEndpoint200Schema, temasekWebApiFeaturesRoomsSignboardGetEndpointPathParamsSchema, temasekWebApiFeaturesRoomsSignboardGetEndpointQueryResponseSchema } from "./zod/temasekWebApiFeaturesRoomsSignboardGetEndpointSchema.ts";

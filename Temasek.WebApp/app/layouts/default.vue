@@ -58,6 +58,14 @@ const links = computed(() => [
         },
       ],
     },
+    {
+      label: 'Rooms',
+      icon: 'i-lucide-door-open',
+      to: '/rooms',
+      onSelect: () => {
+        open.value = false
+      },
+    },
   ],
   [
     {

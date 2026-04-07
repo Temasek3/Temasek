@@ -6,6 +6,11 @@ export type { TemasekWebApiFeaturesFormSgValidateEndpoint200, TemasekWebApiFeatu
 export type { TemasekWebApiFeaturesFormSgValidateResponse } from "./TemasekWebApiFeaturesFormSgValidateResponse.ts";
 export type { TemasekWebApiFeaturesIndexGetEndpoint204, TemasekWebApiFeaturesIndexGetEndpointQuery, TemasekWebApiFeaturesIndexGetEndpointQueryResponse } from "./TemasekWebApiFeaturesIndexGetEndpoint.ts";
 export type { TemasekWebApiFeaturesPokedexListEndpoint204, TemasekWebApiFeaturesPokedexListEndpoint401, TemasekWebApiFeaturesPokedexListEndpointQuery, TemasekWebApiFeaturesPokedexListEndpointQueryResponse } from "./TemasekWebApiFeaturesPokedexListEndpoint.ts";
+export type { TemasekWebApiFeaturesRoomsCreateEndpoint200, TemasekWebApiFeaturesRoomsCreateEndpointMutation, TemasekWebApiFeaturesRoomsCreateEndpointMutationRequest, TemasekWebApiFeaturesRoomsCreateEndpointMutationResponse } from "./TemasekWebApiFeaturesRoomsCreateEndpoint.ts";
+export type { TemasekWebApiFeaturesRoomsCreateRequest } from "./TemasekWebApiFeaturesRoomsCreateRequest.ts";
+export type { TemasekWebApiFeaturesRoomsCreateResponse } from "./TemasekWebApiFeaturesRoomsCreateResponse.ts";
+export type { TemasekWebApiFeaturesRoomsListEndpoint200, TemasekWebApiFeaturesRoomsListEndpointQuery, TemasekWebApiFeaturesRoomsListEndpointQueryResponse } from "./TemasekWebApiFeaturesRoomsListEndpoint.ts";
+export type { TemasekWebApiFeaturesRoomsListResponse } from "./TemasekWebApiFeaturesRoomsListResponse.ts";
 export type { TemasekWebApiFeaturesRoomsSignboardContractsRoomSignboardResponse } from "./TemasekWebApiFeaturesRoomsSignboardContractsRoomSignboardResponse.ts";
 export type { TemasekWebApiFeaturesRoomsSignboardContractsSignboardActivityDto } from "./TemasekWebApiFeaturesRoomsSignboardContractsSignboardActivityDto.ts";
 export type { TemasekWebApiFeaturesRoomsSignboardGetEndpoint200, TemasekWebApiFeaturesRoomsSignboardGetEndpointPathParams, TemasekWebApiFeaturesRoomsSignboardGetEndpointQuery, TemasekWebApiFeaturesRoomsSignboardGetEndpointQueryResponse } from "./TemasekWebApiFeaturesRoomsSignboardGetEndpoint.ts";

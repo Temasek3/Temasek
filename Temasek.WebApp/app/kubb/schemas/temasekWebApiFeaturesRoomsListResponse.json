@@ -1,0 +1,1 @@
+{"type":"object","additionalProperties":false,"required":["roomId","name","scheduleCount","updatedAtUtc"],"properties":{"roomId":{"type":"string"},"name":{"type":"string"},"scheduleCount":{"type":"integer","format":"int32"},"updatedAtUtc":{"type":"string","format":"date-time"}},"x-readme-ref-name":"TemasekWebApiFeaturesRoomsListResponse"}

@@ -9,7 +9,7 @@ import { faker } from "@faker-js/faker";
 export function createTemasekWebApiFeaturesEnabledFeaturesGetResponse(data?: Partial<TemasekWebApiFeaturesEnabledFeaturesGetResponse>): TemasekWebApiFeaturesEnabledFeaturesGetResponse {
 
   return {
-    ...{"isFacilitiesEnabled": faker.datatype.boolean(),"isCalendarrEnabled": faker.datatype.boolean()},
+    ...{"isFacilitiesEnabled": faker.datatype.boolean()},
     ...data || {}
   }
 }

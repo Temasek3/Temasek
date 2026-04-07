@@ -1,0 +1,1 @@
+{"type":"object","additionalProperties":false,"required":["roomId"],"properties":{"roomId":{"type":"string"},"name":{"type":"string","nullable":true}},"x-readme-ref-name":"TemasekWebApiFeaturesRoomsCreateRequest"}

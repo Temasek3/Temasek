@@ -104,6 +104,12 @@ const primaryCountdownText = computed(() => formatEndsIn(primaryActivity.value, 
 const primaryMetaItems = computed(() => primaryActivity.value ? getMetaItems(primaryActivity.value) : [])
 const nextMetaItems = computed(() => renderedNext.value ? getMetaItems(renderedNext.value) : [])
 const showNextPanel = computed(() => Boolean(renderedCurrent.value))
+const shouldTriggerPixelPal = computed(() => {
+  const queryValue = route.query.pixelPal
+  const normalized = Array.isArray(queryValue) ? queryValue[0] : queryValue
+
+  return normalized === '1' || normalized === 'true' || normalized === 'yes'
+})
 
 function getSignboardPath(targetRoomId: string = roomId.value) {
   return `/rooms/${encodeURIComponent(targetRoomId)}/signboard`
@@ -289,6 +295,8 @@ onBeforeUnmount(() => {
   <main
     class="dashboard flex min-h-screen flex-col gap-3 bg-linear-to-b from-slate-100 via-slate-50 to-slate-200 p-4 text-slate-900 antialiased [text-rendering:optimizeLegibility] dark:from-slate-900 dark:via-slate-950 dark:to-slate-950 dark:text-slate-50 lg:gap-4 lg:p-5 xl:p-6"
   >
+    <PixelPalEasterEgg :trigger="shouldTriggerPixelPal" />
+
     <section class="grid gap-3 lg:grid-cols-[auto_minmax(0,1fr)] lg:items-start lg:gap-4">
       <div
         class="flex w-full flex-col items-start justify-center gap-3 rounded-2xl border border-slate-300 bg-linear-to-b from-white to-slate-50 p-5 shadow-lg shadow-slate-900/10 dark:border-slate-700 dark:from-slate-900 dark:to-slate-950 dark:shadow-black/30 lg:w-auto lg:self-start lg:p-6"
@@ -356,7 +364,7 @@ onBeforeUnmount(() => {
           primaryCardClass,
           primaryCardClass === 'current'
             ? 'border-4 border-amber-300 bg-linear-to-b from-amber-50 to-amber-100 shadow-xl shadow-amber-900/10 dark:border-amber-500/50 dark:from-amber-950/60 dark:to-amber-900/40 dark:shadow-black/30'
-            : 'border-2 border-slate-300 bg-gradient-to-b from-slate-50 to-slate-100 shadow-lg shadow-slate-900/10 dark:border-slate-700 dark:from-slate-900 dark:to-slate-950 dark:shadow-black/30',
+            : 'border-2 border-slate-300 bg-linear-to-b from-slate-50 to-slate-100 shadow-lg shadow-slate-900/10 dark:border-slate-700 dark:from-slate-900 dark:to-slate-950 dark:shadow-black/30',
         ]"
       >
         <div class="flex items-center justify-start">

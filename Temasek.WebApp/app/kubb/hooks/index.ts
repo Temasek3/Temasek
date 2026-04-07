@@ -3,6 +3,8 @@ export type { TemasekWebApiFeaturesFormSgCallbackEndpointMutationKey } from "./u
 export type { TemasekWebApiFeaturesFormSgValidateEndpointQueryKey } from "./useTemasekWebApiFeaturesFormSgValidateEndpoint.ts";
 export type { TemasekWebApiFeaturesIndexGetEndpointQueryKey } from "./useTemasekWebApiFeaturesIndexGetEndpoint.ts";
 export type { TemasekWebApiFeaturesPokedexListEndpointQueryKey } from "./useTemasekWebApiFeaturesPokedexListEndpoint.ts";
+export type { TemasekWebApiFeaturesRoomsCreateEndpointMutationKey } from "./useTemasekWebApiFeaturesRoomsCreateEndpoint.ts";
+export type { TemasekWebApiFeaturesRoomsListEndpointQueryKey } from "./useTemasekWebApiFeaturesRoomsListEndpoint.ts";
 export type { TemasekWebApiFeaturesRoomsSignboardGetEndpointQueryKey } from "./useTemasekWebApiFeaturesRoomsSignboardGetEndpoint.ts";
 export type { TemasekWebApiFeaturesRoomsSignboardStreamEndpointQueryKey } from "./useTemasekWebApiFeaturesRoomsSignboardStreamEndpoint.ts";
 export type { TemasekWebApiFeaturesRoomsSignboardUpdateEndpointMutationKey } from "./useTemasekWebApiFeaturesRoomsSignboardUpdateEndpoint.ts";
@@ -25,6 +27,13 @@ export { temasekWebApiFeaturesPokedexListEndpoint } from "./useTemasekWebApiFeat
 export { temasekWebApiFeaturesPokedexListEndpointQueryKey } from "./useTemasekWebApiFeaturesPokedexListEndpoint.ts";
 export { temasekWebApiFeaturesPokedexListEndpointQueryOptions } from "./useTemasekWebApiFeaturesPokedexListEndpoint.ts";
 export { useTemasekWebApiFeaturesPokedexListEndpoint } from "./useTemasekWebApiFeaturesPokedexListEndpoint.ts";
+export { temasekWebApiFeaturesRoomsCreateEndpoint } from "./useTemasekWebApiFeaturesRoomsCreateEndpoint.ts";
+export { temasekWebApiFeaturesRoomsCreateEndpointMutationKey } from "./useTemasekWebApiFeaturesRoomsCreateEndpoint.ts";
+export { useTemasekWebApiFeaturesRoomsCreateEndpoint } from "./useTemasekWebApiFeaturesRoomsCreateEndpoint.ts";
+export { temasekWebApiFeaturesRoomsListEndpoint } from "./useTemasekWebApiFeaturesRoomsListEndpoint.ts";
+export { temasekWebApiFeaturesRoomsListEndpointQueryKey } from "./useTemasekWebApiFeaturesRoomsListEndpoint.ts";
+export { temasekWebApiFeaturesRoomsListEndpointQueryOptions } from "./useTemasekWebApiFeaturesRoomsListEndpoint.ts";
+export { useTemasekWebApiFeaturesRoomsListEndpoint } from "./useTemasekWebApiFeaturesRoomsListEndpoint.ts";
 export { temasekWebApiFeaturesRoomsSignboardGetEndpoint } from "./useTemasekWebApiFeaturesRoomsSignboardGetEndpoint.ts";
 export { temasekWebApiFeaturesRoomsSignboardGetEndpointQueryKey } from "./useTemasekWebApiFeaturesRoomsSignboardGetEndpoint.ts";
 export { temasekWebApiFeaturesRoomsSignboardGetEndpointQueryOptions } from "./useTemasekWebApiFeaturesRoomsSignboardGetEndpoint.ts";

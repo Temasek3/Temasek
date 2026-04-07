@@ -6,6 +6,5 @@
 import { z } from "zod/v4";
 
 export const temasekWebApiFeaturesEnabledFeaturesGetResponseSchema = z.object({
-    "isFacilitiesEnabled": z.boolean(),
-"isCalendarrEnabled": z.boolean()
+    "isFacilitiesEnabled": z.boolean()
     })
