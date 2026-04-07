@@ -295,7 +295,7 @@ onBeforeUnmount(() => {
   <main
     class="dashboard flex min-h-screen flex-col gap-3 bg-linear-to-b from-slate-100 via-slate-50 to-slate-200 p-4 text-slate-900 antialiased [text-rendering:optimizeLegibility] dark:from-slate-900 dark:via-slate-950 dark:to-slate-950 dark:text-slate-50 lg:gap-4 lg:p-5 xl:p-6"
   >
-    <PixelPalEasterEgg :trigger="shouldTriggerPixelPal" />
+    <LazyEasterEggsPixelPal :trigger="shouldTriggerPixelPal" />
 
     <section class="grid gap-3 lg:grid-cols-[auto_minmax(0,1fr)] lg:items-start lg:gap-4">
       <div
