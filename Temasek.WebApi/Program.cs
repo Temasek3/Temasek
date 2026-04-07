@@ -7,6 +7,7 @@ using Scalar.AspNetCore;
 using Temasek.WebApi.Clerk;
 using Temasek.WebApi.Features.Facilities;
 using Temasek.WebApi.Features.FormSg;
+using Temasek.WebApi.Features.Rooms.Signboard;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,6 +18,9 @@ builder.Services.AddOptions<FormSgOptions>().Bind(builder.Configuration.GetSecti
 builder
     .Services.AddOptions<FacilitiesOptions>()
     .Bind(builder.Configuration.GetSection("Facilities"));
+builder
+    .Services.AddOptions<RoomSignboardEventBusOptions>()
+    .Bind(builder.Configuration.GetSection("RoomSignboardEventBus"));
 
 builder.Services.AddSingleton(sp =>
 {
@@ -29,6 +33,9 @@ builder.Services.AddSingleton(sp =>
         .UseAutoSyncStructure(true)
         .Build();
 });
+
+builder.Services.AddSingleton<RoomSignboardEventBus>();
+builder.Services.AddScoped<RoomSignboardStore>();
 
 builder.Services.AddScoped(sp => new ClerkBackendApi(
     bearerAuth: sp.GetRequiredService<IOptions<ClerkOptions>>().Value.SecretKey
@@ -60,7 +67,13 @@ builder
 builder.Services.AddAuthorization();
 
 builder.Services.AddFastEndpoints();
-builder.Services.SwaggerDocument();
+builder.Services.SwaggerDocument(options =>
+{
+    options.DocumentSettings = d =>
+    {
+        d.MarkNonNullablePropsAsRequired();
+    };
+});
 
 var app = builder.Build();
 

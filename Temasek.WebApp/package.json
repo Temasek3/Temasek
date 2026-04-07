@@ -35,15 +35,21 @@
     "@tanstack/vue-query-devtools": "^6.1.5",
     "@types/node": "^25.5.0",
     "@vue/devtools-api": "^8.1.0",
+    "@vueuse/core": "^14.2.1",
+    "@vueuse/nuxt": "^14.2.1",
     "better-sqlite3": "^12.8.0",
+    "date-fns": "^4.1.0",
     "eslint": "^10.0.3",
+    "firebase": "^12.11.0",
     "msw": "^2.12.13",
     "nuxt": "^4.4.2",
+    "nuxt-vuefire": "1.1.0",
     "tailwindcss": "^4.2.1",
     "typescript": "^5.9.3",
     "vue": "^3.5.30",
     "vue-cal": "5.0.1-rc.40",
     "vue-router": "^5.0.3",
+    "vue-tsc": "^3.2.6",
     "zod": "^4.3.6"
   }
 }

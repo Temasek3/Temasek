@@ -6,11 +6,11 @@
 
 export type TemasekWebApiFeaturesEnabledFeaturesGetResponse = {
     /**
-     * @type boolean | undefined
+     * @type boolean
     */
-    isFacilitiesEnabled?: boolean;
+    isFacilitiesEnabled: boolean;
     /**
-     * @type boolean | undefined
+     * @type boolean
     */
-    isCalendarrEnabled?: boolean;
+    isCalendarrEnabled: boolean;
 };

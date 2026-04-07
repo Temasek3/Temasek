@@ -2,7 +2,6 @@
 import type { NavigationMenuItem } from '@nuxt/ui'
 import { useTemasekWebApiFeaturesEnabledFeaturesGetEndpoint } from '~/kubb'
 
-const { isSignedIn } = useAuth()
 const route = useRoute()
 
 const { data, isPending } = useTemasekWebApiFeaturesEnabledFeaturesGetEndpoint()

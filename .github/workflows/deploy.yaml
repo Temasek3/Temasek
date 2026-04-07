@@ -2,93 +2,128 @@ name: Deploy
 
 on:
   push:
-    branches: ["master", "wip"]
+    branches:
+      - main
+  workflow_dispatch:
 
-  pull_request:
-    branches: ["master"]
+permissions:
+  contents: read
+
+concurrency:
+  group: production-deploy
+  cancel-in-progress: false
 
 env:
-  REGISTRY: ghcr.io
-  IMAGE_NAME: temasek3/temasek-webapi
+  APP_NAME: "temasek-webapi"
+  SERVICE_NAME: "temasek-webapi"
+  REMOTE_ROOT: "/opt/temasek-webapi"
+  SERVER_PORT: "22"
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
-
     environment: production
 
-    permissions:
-      contents: read
-      packages: write
-      id-token: write
-
     steps:
-      - uses: actions/checkout@v4
+      - name: Check out source
+        uses: actions/checkout@v6
 
-      - name: Install cosign
-        if: github.event_name != 'pull_request'
-        uses: sigstore/cosign-installer@59acb6260d9c0ba8f4a2f9d9b48431a222b68e20 # v3.5.0
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v5
         with:
-          cosign-release: "v2.2.4"
+          dotnet-version: 11.0.x
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@f95db51fddba0c2d1ec667646a06c2ce06100226 # v3.0.0
-
-      - name: Log into registry ${{ env.REGISTRY }}
-        if: github.event_name != 'pull_request'
-        uses: docker/login-action@343f7c4344506bcbf9b4de18042ae17996df046d # v3.0.0
-        with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Extract Docker metadata
+      - name: Compute release id
         id: meta
-        uses: docker/metadata-action@96383f45573cb7f253c731d3b3ab81c87ef81934 # v5.0.0
-        with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+        shell: bash
+        run: |
+          echo "release_id=$(date -u +%Y%m%d%H%M%S)-${GITHUB_SHA::7}" >> "$GITHUB_OUTPUT"
 
-      - name: Build and push Docker image
-        id: build-and-push
-        uses: docker/build-push-action@0565240e2d4ab88bba5387d719585280857ece09 # v5.0.0
-        with:
-          context: .
-          file: Temasek.WebApi/Dockerfile
-          push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+      - name: Publish app
+        shell: bash
+        run: |
+          dotnet publish ./Temasek.WebApi \
+            -c Release \
+            -o "${{ github.workspace }}/publish"
 
-      - name: Sign the published Docker image
-        if: ${{ github.event_name != 'pull_request' }}
+      - name: Create release bundle
+        shell: bash
+        run: |
+          mkdir -p dist
+          tar -C "${{ github.workspace }}/publish" \
+            -czf "dist/${APP_NAME}-${{ steps.meta.outputs.release_id }}.tar.gz" .
+
+      - name: Configure SSH
+        shell: bash
         env:
-          TAGS: ${{ steps.meta.outputs.tags }}
-          DIGEST: ${{ steps.build-and-push.outputs.digest }}
-        run: echo "${TAGS}" | xargs -I {} cosign sign --yes {}@${DIGEST}
+          SERVER_HOST: ${{ secrets.HOST }}
+          SERVER_USER: ${{ secrets.USERNAME }}
+          SERVER_SSH_KEY: ${{ secrets.SSH_KEY }}
+        run: |
+          install -d -m 700 ~/.ssh
+          printf '%s\n' "$SERVER_SSH_KEY" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan -p "${SERVER_PORT}" -H "${SERVER_HOST}" >> ~/.ssh/known_hosts
 
-      - name: Deploy
-        if: ${{ github.event_name != 'pull_request' }}
-        uses: appleboy/ssh-action@v1
-        with:
-          host: ${{ secrets.HOST }}
-          username: ${{ secrets.USERNAME }}
-          password: ${{ secrets.PASSWORD }}
-          port: ${{ secrets.PORT }}
-          script: |
-            podman stop temasek-webapi;
-            podman rm temasek-webapi;
-            podman pull ghcr.io/temasek3/temasek-webapi:master;
-            podman run -d --restart=unless-stopped \
-            	--name temasek-webapi \
-            	-p 9000:8080 \
-              -e CONNECTIONSTRINGS__TEMASEK="${{ secrets.CONNECTIONSTRINGS__TEMASEK }}" \
-              -e CLERK__AUTHORIZED_PARTIES="${{ vars.CLERK__AUTHORIZED_PARTIES }}" \
-              -e CLERK__SECRET_KEY="${{ vars.CLERK__SECRET_KEY }}" \
-              -e FORMSG__CALLBACK_API_KEY="${{ secrets.FORMSG__CALLBACK_API_KEY }}" \
-              -e FORMSG__SECRET_KEY="${{ secrets.FORMSG__SECRET_KEY }}" \
-              -e FORMSG__FORM_ID="${{ vars.FORMSG__FORM_ID }}" \
-              -e FORMSG__PREFILL_FIELD_ID="${{ vars.FORMSG__PREFILL_FIELD_ID }}" \
-              -e FACILITIES__ENABLED="${{ vars.FACILITIES__ENABLED }}" \
-            	-e ASPNETCORE_FORWARDEDHEADERS_ENABLED="true" \
-            	ghcr.io/temasek3/temasek-webapi:master;
+      - name: Upload release bundle
+        shell: bash
+        env:
+          SERVER_HOST: ${{ secrets.HOST }}
+          SERVER_USER: ${{ secrets.USERNAME }}
+          RELEASE_ID: ${{ steps.meta.outputs.release_id }}
+        run: |
+          scp -P "${SERVER_PORT}" \
+            "dist/${APP_NAME}-${RELEASE_ID}.tar.gz" \
+            "${SERVER_USER}@${SERVER_HOST}:/tmp/${APP_NAME}-${RELEASE_ID}.tar.gz"
+
+      - name: Activate release
+        shell: bash
+        env:
+          SERVER_HOST: ${{ secrets.HOST }}
+          SERVER_USER: ${{ secrets.USERNAME }}
+          RELEASE_ID: ${{ steps.meta.outputs.release_id }}
+        run: |
+          ssh -p "${SERVER_PORT}" "${SERVER_USER}@${SERVER_HOST}" <<EOF
+          set -euo pipefail
+
+          APP_NAME="${APP_NAME}"
+          SERVICE_NAME="${SERVICE_NAME}"
+          REMOTE_ROOT="${REMOTE_ROOT}"
+          RELEASE_ID="${RELEASE_ID}"
+          BUNDLE="/tmp/\${APP_NAME}-\${RELEASE_ID}.tar.gz"
+          RELEASE_DIR="\${REMOTE_ROOT}/releases/\${RELEASE_ID}"
+
+          sudo mkdir -p "\${REMOTE_ROOT}/releases"
+          sudo rm -rf "\${RELEASE_DIR}"
+          sudo mkdir -p "\${RELEASE_DIR}"
+
+          sudo tar -xzf "\${BUNDLE}" -C "\${RELEASE_DIR}"
+          sudo chown -R root:root "\${RELEASE_DIR}"
+          sudo find "\${RELEASE_DIR}" -type d -exec chmod 755 {} \;
+          sudo find "\${RELEASE_DIR}" -type f -exec chmod 644 {} \;
+
+          if [ -f "\${RELEASE_DIR}/\${APP_NAME}" ]; then
+            sudo chmod 755 "\${RELEASE_DIR}/\${APP_NAME}"
+          fi
+
+          sudo ln -sfn "\${RELEASE_DIR}" "\${REMOTE_ROOT}/current"
+          sudo systemctl daemon-reload
+          sudo systemctl restart "\${SERVICE_NAME}"
+          sudo systemctl is-active --quiet "\${SERVICE_NAME}"
+
+          sudo rm -f "\${BUNDLE}"
+
+          mapfile -t old_releases < <(sudo ls -1dt "\${REMOTE_ROOT}"/releases/* 2>/dev/null | tail -n +6 || true)
+          if [ "\${#old_releases[@]}" -gt 0 ]; then
+            sudo rm -rf "\${old_releases[@]}"
+          fi
+          EOF
+
+      - name: Show running version
+        shell: bash
+        env:
+          SERVER_HOST: ${{ secrets.HOST }}
+          SERVER_USER: ${{ secrets.USERNAME }}
+        run: |
+          ssh -p "${SERVER_PORT}" "${SERVER_USER}@${SERVER_HOST}" \
+            "readlink -f ${REMOTE_ROOT}/current && sudo systemctl status ${SERVICE_NAME} --no-pager --lines=20"

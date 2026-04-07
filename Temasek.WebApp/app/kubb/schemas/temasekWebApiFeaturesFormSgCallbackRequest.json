@@ -1,0 +1,1 @@
+{"type":"object","additionalProperties":false,"required":["clerkUserId","nric","name"],"properties":{"clerkUserId":{"type":"string","minLength":1},"nric":{"type":"string","minLength":1},"name":{"type":"string","minLength":1}},"x-readme-ref-name":"TemasekWebApiFeaturesFormSgCallbackRequest"}

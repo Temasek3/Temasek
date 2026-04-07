@@ -13,6 +13,7 @@ export default defineConfig({
   },
   output: {
     path: './app/kubb',
+    format: false,
   },
   plugins: [
     pluginOas(),

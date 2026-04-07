@@ -39,10 +39,9 @@ var api = builder
     .WithEnvironment("Facilities:CarbonCopyCalendarId", facilitiesCarbonCopyCalendarId);
 
 var app = builder
-    .AddViteApp("temasek-webapp", "../Temasek.WebApp")
+    .AddJavaScriptApp("temasek-webapp", "../Temasek.WebApp")
     .WithPnpm()
-    .PublishAsDockerFile()
-    .PublishAsDockerComposeService((_, _) => { })
+    .WithHttpEndpoint(port: 3000, env: "PORT")
     .WithReference(api)
     .WithEnvironment("NUXT_PUBLIC_CLERK_PUBLISHABLE_KEY", clerkPublishableKey);
 

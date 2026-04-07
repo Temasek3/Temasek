@@ -19,6 +19,7 @@ export default defineNuxtConfig({
     '@nuxt/ui',
     '@clerk/nuxt',
     '@nuxt/hints',
+    '@vueuse/nuxt',
     (_, nuxt) => {
       nuxt.options.alias['#hints-config'] = join(currentDir, 'hints.config.ts')
     },
@@ -47,5 +48,13 @@ export default defineNuxtConfig({
   clerk: {
     skipServerMiddleware: true,
     publishableKey: process.env.NUXT_PUBLIC_CLERK_PUBLISHABLE_KEY,
+  },
+
+  typescript: {
+    tsConfig: {
+      compilerOptions: {
+        allowImportingTsExtensions: true,
+      },
+    },
   },
 })

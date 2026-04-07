@@ -1,0 +1,33 @@
+[Unit]
+Description=Temasek Web API
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/temasek-webapi/current
+ExecStart=/home/ubuntu/.dotnet/dotnet /opt/temasek-webapi/current/Temasek.WebApi.dll
+Restart=always
+RestartSec=5
+
+DynamicUser=yes
+StateDirectory=temasek-webapi
+LogsDirectory=temasek-webapi
+CacheDirectory=temasek-webapi
+
+ProtectSystem=strict
+ProtectHome=yes
+PrivateTmp=yes
+NoNewPrivileges=yes
+
+KillSignal=SIGINT
+SyslogIdentifier=temasek-webapi
+
+ReadWritePaths=/var/lib/temasek-webapi /var/log/temasek-webapi
+
+Environment=ASPNETCORE_ENVIRONMENT=Production
+Environment=ASPNETCORE_URLS=http://127.0.0.1:5000
+EnvironmentFile=-/etc/temasek-webapi/temasek-webapi.env
+
+[Install]
+WantedBy=multi-user.target
