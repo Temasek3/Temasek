@@ -470,7 +470,9 @@ onBeforeUnmount(() => {
 .dashboard {
   font-family: 'Atkinson Hyperlegible Next', 'Atkinson Hyperlegible', 'Trebuchet MS', 'Segoe UI', Arial, sans-serif;
 }
+</style>
 
+<style>
 @keyframes seating-marquee-scroll {
   from {
     transform: translateX(0);

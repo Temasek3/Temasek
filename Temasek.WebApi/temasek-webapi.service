@@ -6,7 +6,7 @@ Wants=network-online.target
 [Service]
 Type=simple
 WorkingDirectory=/opt/temasek-webapi/current
-ExecStart=/home/ubuntu/.dotnet/dotnet /opt/temasek-webapi/current/Temasek.WebApi.dll
+ExecStart=/usr/bin/dotnet /opt/temasek-webapi/current/Temasek.WebApi.dll
 Restart=always
 RestartSec=5
 
