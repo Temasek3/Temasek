@@ -3,7 +3,6 @@ import type {
   TemasekWebApiFeaturesRoomsCreateEndpointMutationRequest as CreateRoomPayload,
   TemasekWebApiFeaturesRoomsListResponse as RoomSummary,
 } from '~/kubb'
-import PixelPalEasterEgg from '~/components/easter-eggs/PixelPalEasterEgg.vue'
 import {
   useTemasekWebApiFeaturesRoomsCreateEndpoint,
   useTemasekWebApiFeaturesRoomsListEndpoint,
@@ -12,7 +11,6 @@ import {
 const roomId = ref('')
 const roomName = ref('')
 const createError = ref('')
-const route = useRoute()
 
 const roomsQuery = useTemasekWebApiFeaturesRoomsListEndpoint({
   client: {
@@ -51,12 +49,6 @@ const rooms = computed<RoomSummary[]>(() => {
   return [...response].sort((a, b) => a.name.localeCompare(b.name) || a.roomId.localeCompare(b.roomId))
 })
 const canCreateRoom = computed(() => normalizedRoomId.value.length > 0 && !isCreating.value)
-const shouldTriggerPixelPal = computed(() => {
-  const queryValue = route.query.pixelPal
-  const normalized = Array.isArray(queryValue) ? queryValue[0] : queryValue
-
-  return normalized === '1' || normalized === 'true' || normalized === 'yes'
-})
 
 function formatUpdatedAt(updatedAtUtc: string) {
   const parsed = new Date(updatedAtUtc)
@@ -105,8 +97,6 @@ function createRoom() {
     </template>
 
     <template #body>
-      <PixelPalEasterEgg :trigger="shouldTriggerPixelPal" />
-
       <div class="grid gap-6 xl:grid-cols-[minmax(18rem,24rem)_1fr]">
         <UCard>
           <template #header>
