@@ -37,6 +37,7 @@ const SPRITE_ROWS = [
 ] as const
 
 const PIXEL_SIZE = 5
+const DEFAULT_VISIBLE_DURATION_MS = 30_000
 
 const palette: Record<string, string> = {
   d: '#21301e',
@@ -140,7 +141,7 @@ function scheduleNextAppearance() {
     hideTimer = window.setTimeout(() => {
       visible.value = false
       scheduleNextAppearance()
-    }, randomInt(6500, 10500))
+    }, DEFAULT_VISIBLE_DURATION_MS)
   }, randomInt(9000, 22000))
 }
 
@@ -157,7 +158,7 @@ function triggerNow() {
   hideTimer = window.setTimeout(() => {
     visible.value = false
     scheduleNextAppearance()
-  }, randomInt(6000, 9000))
+  }, DEFAULT_VISIBLE_DURATION_MS)
 }
 
 watch(() => props.enabled, (nextEnabled) => {
