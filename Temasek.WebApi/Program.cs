@@ -24,14 +24,14 @@ builder
 
 builder.Services.AddSingleton(sp =>
 {
-    var logger = sp.GetRequiredService<ILoggerFactory>().CreateLogger("FreeSql");
+    var logger = sp.GetRequiredService<ILogger<IFreeSql>>();
 
     return new FreeSql.FreeSqlBuilder()
         .UseConnectionString(
             FreeSql.DataType.MySql,
             builder.Configuration.GetConnectionString("temasek")
         )
-        .UseMonitorCommand(cmd => logger.LogDebug("SQL: {CommandText}", cmd.CommandText))
+        .UseMonitorCommand(cmd => logger.LogSqlCommand(cmd.CommandText))
         .UseAutoSyncStructure(true)
         .Build();
 });
@@ -96,3 +96,11 @@ app.MapDefaultEndpoints();
 app.MapScalarApiReference();
 
 app.Run();
+
+return;
+
+public static partial class LoggerExtensions
+{
+    [LoggerMessage(LogLevel.Information, "SQL: {CommandText}")]
+    public static partial void LogSqlCommand(this ILogger logger, string commandText);
+}
