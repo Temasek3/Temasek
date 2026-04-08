@@ -41,12 +41,19 @@ const renderedNext = ref<SignboardActivity | null>(null)
 const renderedLaterActivities = ref<SignboardActivity[]>([])
 const seatingAlertMessage = ref('')
 
+const clockPanel = ref<HTMLElement | null>(null)
+const laterTodayPanel = ref<HTMLElement | null>(null)
+const laterTodayList = ref<HTMLElement | null>(null)
 const clockTime = ref<HTMLElement | null>(null)
 const currentTitle = ref<HTMLElement | null>(null)
 const nextTitle = ref<HTMLElement | null>(null)
 
 let tickIntervalId: number | null = null
 let resizeHandler: (() => void) | null = null
+let laterTodayScrollFrameId: number | null = null
+let laterTodayScrollPauseTimeoutId: number | null = null
+let laterTodayScrollLastTimestamp: number | null = null
+let laterTodayScrollDirection = 1
 
 const roomStreamUrl = computed(() => buildApiUrl(`${getSignboardPath(roomId.value)}/stream`))
 const {
@@ -173,6 +180,108 @@ function fitClockTime() {
   fitSingleLineElement(clockTime.value, 10, 4)
 }
 
+function stopLaterTodayAutoScroll() {
+  if (laterTodayScrollFrameId !== null) {
+    window.cancelAnimationFrame(laterTodayScrollFrameId)
+    laterTodayScrollFrameId = null
+  }
+
+  if (laterTodayScrollPauseTimeoutId !== null) {
+    window.clearTimeout(laterTodayScrollPauseTimeoutId)
+    laterTodayScrollPauseTimeoutId = null
+  }
+
+  laterTodayScrollLastTimestamp = null
+}
+
+function stepLaterTodayAutoScroll(timestamp: number) {
+  const list = laterTodayList.value
+
+  if (!list) {
+    stopLaterTodayAutoScroll()
+    return
+  }
+
+  const maxScrollTop = Math.max(0, list.scrollHeight - list.clientHeight)
+
+  if (maxScrollTop <= 0) {
+    list.scrollTop = 0
+    laterTodayScrollDirection = 1
+    stopLaterTodayAutoScroll()
+    return
+  }
+
+  if (laterTodayScrollLastTimestamp === null) {
+    laterTodayScrollLastTimestamp = timestamp
+    laterTodayScrollFrameId = window.requestAnimationFrame(stepLaterTodayAutoScroll)
+    return
+  }
+
+  const deltaSeconds = (timestamp - laterTodayScrollLastTimestamp) / 1000
+  const pixelsPerSecond = 16
+  const nextScrollTop = list.scrollTop + (laterTodayScrollDirection * pixelsPerSecond * deltaSeconds)
+
+  laterTodayScrollLastTimestamp = timestamp
+
+  if (nextScrollTop >= maxScrollTop || nextScrollTop <= 0) {
+    list.scrollTop = nextScrollTop >= maxScrollTop ? maxScrollTop : 0
+    laterTodayScrollDirection *= -1
+    laterTodayScrollFrameId = null
+    laterTodayScrollLastTimestamp = null
+    laterTodayScrollPauseTimeoutId = window.setTimeout(() => {
+      laterTodayScrollPauseTimeoutId = null
+      laterTodayScrollFrameId = window.requestAnimationFrame(stepLaterTodayAutoScroll)
+    }, 1400)
+    return
+  }
+
+  list.scrollTop = nextScrollTop
+  laterTodayScrollFrameId = window.requestAnimationFrame(stepLaterTodayAutoScroll)
+}
+
+function syncLaterTodayAutoScroll() {
+  if (!import.meta.client) {
+    return
+  }
+
+  const list = laterTodayList.value
+
+  if (!list) {
+    stopLaterTodayAutoScroll()
+    return
+  }
+
+  const maxScrollTop = Math.max(0, list.scrollHeight - list.clientHeight)
+
+  if (maxScrollTop <= 0) {
+    list.scrollTop = 0
+    laterTodayScrollDirection = 1
+    stopLaterTodayAutoScroll()
+    return
+  }
+
+  if (list.scrollTop > maxScrollTop) {
+    list.scrollTop = maxScrollTop
+  }
+
+  if (laterTodayScrollFrameId === null && laterTodayScrollPauseTimeoutId === null) {
+    laterTodayScrollFrameId = window.requestAnimationFrame(stepLaterTodayAutoScroll)
+  }
+}
+
+function syncLaterTodayPanelHeight() {
+  if (!import.meta.client || !laterTodayPanel.value) {
+    return
+  }
+
+  if (!clockPanel.value || !window.matchMedia('(min-width: 1024px)').matches) {
+    laterTodayPanel.value.style.maxHeight = ''
+    return
+  }
+
+  laterTodayPanel.value.style.maxHeight = `${clockPanel.value.offsetHeight}px`
+}
+
 function fitMetaValues() {
   document.querySelectorAll<HTMLElement>('.meta-value').forEach((container) => {
     const isPrimary = Boolean(container.closest('.activity-card.current, .activity-card.upcoming-main'))
@@ -190,6 +299,8 @@ function renderActivityState(currentTime: Date) {
 
   nextTick(() => {
     fitClockTime()
+    syncLaterTodayPanelHeight()
+    syncLaterTodayAutoScroll()
     fitActivityTitles()
     fitMetaValues()
   })
@@ -266,6 +377,8 @@ onMounted(() => {
 
   resizeHandler = () => {
     fitClockTime()
+    syncLaterTodayPanelHeight()
+    syncLaterTodayAutoScroll()
     fitActivityTitles()
     fitMetaValues()
   }
@@ -285,6 +398,8 @@ onBeforeUnmount(() => {
     window.clearInterval(tickIntervalId)
   }
 
+  stopLaterTodayAutoScroll()
+
   if (resizeHandler) {
     window.removeEventListener('resize', resizeHandler)
   }
@@ -299,6 +414,7 @@ onBeforeUnmount(() => {
 
     <section class="grid gap-3 lg:grid-cols-[auto_minmax(0,1fr)] lg:items-start lg:gap-4">
       <div
+        ref="clockPanel"
         class="flex w-full flex-col items-start justify-center gap-3 rounded-2xl border border-slate-300 bg-linear-to-b from-white to-slate-50 p-5 shadow-lg shadow-slate-900/10 dark:border-slate-700 dark:from-slate-900 dark:to-slate-950 dark:shadow-black/30 lg:w-auto lg:self-start lg:p-6"
       >
         <div
@@ -314,12 +430,13 @@ onBeforeUnmount(() => {
 
       <aside
         v-if="renderedLaterActivities.length"
-        class="grid h-fit w-full min-w-0 max-w-xl gap-3 overflow-hidden rounded-2xl border border-slate-200 bg-white/90 p-4 shadow-lg shadow-slate-900/10 backdrop-blur-sm dark:border-slate-700 dark:bg-slate-900/90 dark:shadow-black/30 lg:justify-self-end"
+        ref="laterTodayPanel"
+        class="grid h-fit w-full min-w-0 max-w-xl grid-rows-[auto_minmax(0,1fr)] gap-3 overflow-hidden rounded-2xl border border-slate-200 bg-white/90 p-4 shadow-lg shadow-slate-900/10 backdrop-blur-sm dark:border-slate-700 dark:bg-slate-900/90 dark:shadow-black/30 lg:justify-self-end"
       >
         <div class="text-sm font-bold uppercase tracking-widest text-slate-600 dark:text-slate-400">
           Later Today
         </div>
-        <div class="grid min-h-0 gap-2 overflow-auto pr-1">
+        <div ref="laterTodayList" class="grid min-h-0 gap-2 overflow-auto pr-1">
           <div
             v-for="activity in renderedLaterActivities"
             :key="activity.id"
