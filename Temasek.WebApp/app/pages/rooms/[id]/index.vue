@@ -43,17 +43,12 @@ const seatingAlertMessage = ref('')
 
 const clockPanel = ref<HTMLElement | null>(null)
 const laterTodayPanel = ref<HTMLElement | null>(null)
-const laterTodayList = ref<HTMLElement | null>(null)
 const clockTime = ref<HTMLElement | null>(null)
 const currentTitle = ref<HTMLElement | null>(null)
 const nextTitle = ref<HTMLElement | null>(null)
 
 let tickIntervalId: number | null = null
 let resizeHandler: (() => void) | null = null
-let laterTodayScrollFrameId: number | null = null
-let laterTodayScrollPauseTimeoutId: number | null = null
-let laterTodayScrollLastTimestamp: number | null = null
-let laterTodayScrollDirection = 1
 
 const roomStreamUrl = computed(() => buildApiUrl(`${getSignboardPath(roomId.value)}/stream`))
 const {
@@ -180,95 +175,6 @@ function fitClockTime() {
   fitSingleLineElement(clockTime.value, 10, 4)
 }
 
-function stopLaterTodayAutoScroll() {
-  if (laterTodayScrollFrameId !== null) {
-    window.cancelAnimationFrame(laterTodayScrollFrameId)
-    laterTodayScrollFrameId = null
-  }
-
-  if (laterTodayScrollPauseTimeoutId !== null) {
-    window.clearTimeout(laterTodayScrollPauseTimeoutId)
-    laterTodayScrollPauseTimeoutId = null
-  }
-
-  laterTodayScrollLastTimestamp = null
-}
-
-function stepLaterTodayAutoScroll(timestamp: number) {
-  const list = laterTodayList.value
-
-  if (!list) {
-    stopLaterTodayAutoScroll()
-    return
-  }
-
-  const maxScrollTop = Math.max(0, list.scrollHeight - list.clientHeight)
-
-  if (maxScrollTop <= 0) {
-    list.scrollTop = 0
-    laterTodayScrollDirection = 1
-    stopLaterTodayAutoScroll()
-    return
-  }
-
-  if (laterTodayScrollLastTimestamp === null) {
-    laterTodayScrollLastTimestamp = timestamp
-    laterTodayScrollFrameId = window.requestAnimationFrame(stepLaterTodayAutoScroll)
-    return
-  }
-
-  const deltaSeconds = (timestamp - laterTodayScrollLastTimestamp) / 1000
-  const pixelsPerSecond = 16
-  const nextScrollTop = list.scrollTop + (laterTodayScrollDirection * pixelsPerSecond * deltaSeconds)
-
-  laterTodayScrollLastTimestamp = timestamp
-
-  if (nextScrollTop >= maxScrollTop || nextScrollTop <= 0) {
-    list.scrollTop = nextScrollTop >= maxScrollTop ? maxScrollTop : 0
-    laterTodayScrollDirection *= -1
-    laterTodayScrollFrameId = null
-    laterTodayScrollLastTimestamp = null
-    laterTodayScrollPauseTimeoutId = window.setTimeout(() => {
-      laterTodayScrollPauseTimeoutId = null
-      laterTodayScrollFrameId = window.requestAnimationFrame(stepLaterTodayAutoScroll)
-    }, 1400)
-    return
-  }
-
-  list.scrollTop = nextScrollTop
-  laterTodayScrollFrameId = window.requestAnimationFrame(stepLaterTodayAutoScroll)
-}
-
-function syncLaterTodayAutoScroll() {
-  if (!import.meta.client) {
-    return
-  }
-
-  const list = laterTodayList.value
-
-  if (!list) {
-    stopLaterTodayAutoScroll()
-    return
-  }
-
-  const maxScrollTop = Math.max(0, list.scrollHeight - list.clientHeight)
-
-  if (maxScrollTop <= 0) {
-    list.scrollTop = 0
-    laterTodayScrollDirection = 1
-    stopLaterTodayAutoScroll()
-    return
-  }
-
-  if (list.scrollTop > maxScrollTop) {
-    list.scrollTop = maxScrollTop
-  }
-
-  if (laterTodayScrollFrameId === null && laterTodayScrollPauseTimeoutId === null) {
-    laterTodayScrollFrameId = window.requestAnimationFrame(stepLaterTodayAutoScroll)
-  }
-}
-
 function syncLaterTodayPanelHeight() {
   if (!import.meta.client || !laterTodayPanel.value) {
     return
@@ -300,7 +206,6 @@ function renderActivityState(currentTime: Date) {
   nextTick(() => {
     fitClockTime()
     syncLaterTodayPanelHeight()
-    syncLaterTodayAutoScroll()
     fitActivityTitles()
     fitMetaValues()
   })
@@ -378,7 +283,6 @@ onMounted(() => {
   resizeHandler = () => {
     fitClockTime()
     syncLaterTodayPanelHeight()
-    syncLaterTodayAutoScroll()
     fitActivityTitles()
     fitMetaValues()
   }
@@ -397,8 +301,6 @@ onBeforeUnmount(() => {
   if (tickIntervalId !== null) {
     window.clearInterval(tickIntervalId)
   }
-
-  stopLaterTodayAutoScroll()
 
   if (resizeHandler) {
     window.removeEventListener('resize', resizeHandler)
@@ -436,7 +338,7 @@ onBeforeUnmount(() => {
         <div class="text-sm font-bold uppercase tracking-widest text-slate-600 dark:text-slate-400">
           Later Today
         </div>
-        <div ref="laterTodayList" class="grid min-h-0 gap-2 overflow-auto pr-1">
+        <div class="grid min-h-0 gap-2 overflow-auto pr-1">
           <div
             v-for="activity in renderedLaterActivities"
             :key="activity.id"
