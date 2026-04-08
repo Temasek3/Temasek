@@ -59,10 +59,4 @@ export default defineNuxtConfig({
       },
     },
   },
-
-  nitro: {
-    output: {
-      dir: '../Temasek.WebApi/wwwroot/.output',
-    },
-  },
 })

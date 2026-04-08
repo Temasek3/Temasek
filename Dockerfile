@@ -45,7 +45,7 @@ FROM mcr.microsoft.com/dotnet/aspnet:11.0-preview AS final
 WORKDIR /app
 
 COPY --from=api-build /app/publish .
-COPY --from=web-build /src/Temasek.WebApp/.output/public ./wwwroot/.output/public
+COPY --from=web-build /src/Temasek.WebApp/wwwroot/.output ./wwwroot/.output/
 
 ENV ASPNETCORE_URLS=http://+:8080
 
