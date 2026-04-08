@@ -24,12 +24,14 @@ builder
 
 builder.Services.AddSingleton(sp =>
 {
+    var logger = sp.GetRequiredService<ILoggerFactory>().CreateLogger("FreeSql");
+
     return new FreeSql.FreeSqlBuilder()
         .UseConnectionString(
             FreeSql.DataType.MySql,
             builder.Configuration.GetConnectionString("temasek")
         )
-        .UseMonitorCommand(cmd => Console.WriteLine($"Sql：{cmd.CommandText}"))
+        .UseMonitorCommand(cmd => logger.LogDebug("SQL: {CommandText}", cmd.CommandText))
         .UseAutoSyncStructure(true)
         .Build();
 });

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { RoomSignboardSnapshot, SignboardActivity } from './signboard-helpers'
+import type { RoomSignboardSnapshot } from './signboard-helpers'
 import type { TemasekWebApiFeaturesRoomsSignboardContractsRoomSignboardResponse as RoomSignboardSnapshotContract } from '~/kubb'
 
 import { useTemasekWebApiFeaturesRoomsSignboardGetEndpoint } from '~/kubb'
@@ -23,7 +23,6 @@ const runtimeConfig = useRuntimeConfig()
 const roomId = computed(() => String(route.params.id))
 const encodedRoomId = computed(() => encodeURIComponent(roomId.value))
 const apiBaseUrl = computed(() => String(runtimeConfig.public.temasekWebApiHttps ?? '').trim())
-const roomState = ref<RoomSignboardSnapshot | null>(null)
 const roomQuery = useTemasekWebApiFeaturesRoomsSignboardGetEndpoint(encodedRoomId, {
   client: {
     auth: 'none',
@@ -35,20 +34,14 @@ const roomQuery = useTemasekWebApiFeaturesRoomsSignboardGetEndpoint(encodedRoomI
 })
 
 const now = ref(new Date())
-const renderedNow = ref(new Date())
-const renderedCurrent = ref<SignboardActivity | null>(null)
-const renderedNext = ref<SignboardActivity | null>(null)
-const renderedLaterActivities = ref<SignboardActivity[]>([])
-const seatingAlertMessage = ref('')
-
+const dashboard = ref<HTMLElement | null>(null)
 const clockPanel = ref<HTMLElement | null>(null)
 const laterTodayPanel = ref<HTMLElement | null>(null)
 const clockTime = ref<HTMLElement | null>(null)
 const currentTitle = ref<HTMLElement | null>(null)
 const nextTitle = ref<HTMLElement | null>(null)
 
-let tickIntervalId: number | null = null
-let resizeHandler: (() => void) | null = null
+const roomState = ref<RoomSignboardSnapshot>(createRoomSnapshot())
 
 const roomStreamUrl = computed(() => buildApiUrl(`${getSignboardPath(roomId.value)}/stream`))
 const {
@@ -71,8 +64,12 @@ const {
   },
 )
 
-const schedule = computed(() => normalizeSchedule(roomState.value?.schedule))
-const sortedSchedule = computed(() => sortSchedule(schedule.value))
+const sortedSchedule = computed(() => sortSchedule(roomState.value.schedule))
+const scheduleState = computed(() => getScheduleState(sortedSchedule.value, now.value))
+const currentActivity = computed(() => scheduleState.value.current)
+const nextActivity = computed(() => scheduleState.value.next)
+const laterActivities = computed(() => getActivitiesAfterNext(sortedSchedule.value, nextActivity.value))
+const seatingAlertMessage = computed(() => getSeatingAlertMessage(nextActivity.value, now.value))
 
 const clockTimeText = computed(() => (
   now.value.toLocaleTimeString([], {
@@ -92,26 +89,54 @@ const clockDateText = computed(() => (
 ))
 
 const currentEmptyMessage = computed(() => (
-  renderedNext.value
+  nextActivity.value
     ? 'No activity is in progress right now.'
     : 'There are no more scheduled activities for today.'
 ))
 
-const showUpcomingAsPrimary = computed(() => !renderedCurrent.value && !!renderedNext.value)
-const primaryActivity = computed(() => renderedCurrent.value || renderedNext.value || null)
+const showUpcomingAsPrimary = computed(() => !currentActivity.value && !!nextActivity.value)
+const primaryActivity = computed(() => currentActivity.value || nextActivity.value || null)
 const primaryLabel = computed(() => showUpcomingAsPrimary.value ? 'Next Activity' : 'Current Activity')
 const primaryCardClass = computed(() => showUpcomingAsPrimary.value ? 'upcoming-main' : 'current')
-const primaryHasCountdown = computed(() => Boolean(renderedCurrent.value))
-const primaryCountdownText = computed(() => formatEndsIn(primaryActivity.value, renderedNow.value))
+const showNextPanel = computed(() => Boolean(currentActivity.value))
+const primaryCardClasses = computed(() => [
+  showNextPanel.value ? 'lg:col-span-3' : '',
+  primaryCardClass.value,
+  primaryCardClass.value === 'current'
+    ? 'border-4 border-amber-300 bg-linear-to-b from-amber-50 to-amber-100 shadow-xl shadow-amber-900/10 dark:border-amber-500/50 dark:from-amber-950/60 dark:to-amber-900/40 dark:shadow-black/30'
+    : 'border-2 border-slate-300 bg-linear-to-b from-slate-50 to-slate-100 shadow-lg shadow-slate-900/10 dark:border-slate-700 dark:from-slate-900 dark:to-slate-950 dark:shadow-black/30',
+])
+const primaryLabelClasses = computed(() => (
+  showUpcomingAsPrimary.value
+    ? 'inline-flex rounded-full border border-slate-300/70 bg-slate-200/80 px-3 py-2 text-lg font-bold uppercase tracking-widest text-slate-600 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300'
+    : 'inline-flex rounded-full border border-amber-300/60 bg-amber-200/60 px-3 py-2 text-lg font-extrabold uppercase tracking-widest text-amber-800 dark:border-amber-500/30 dark:bg-amber-500/15 dark:text-amber-300'
+))
+const primaryTitleClasses = computed(() => (
+  primaryCardClass.value === 'current'
+    ? 'text-7xl text-amber-950 dark:text-amber-100 md:text-8xl 2xl:text-9xl'
+    : 'text-6xl text-slate-800 dark:text-slate-50 md:text-7xl xl:text-8xl'
+))
+const primaryHasCountdown = computed(() => Boolean(currentActivity.value))
+const primaryCountdownText = computed(() => formatEndsIn(primaryActivity.value, now.value))
 const primaryMetaItems = computed(() => primaryActivity.value ? getMetaItems(primaryActivity.value) : [])
-const nextMetaItems = computed(() => renderedNext.value ? getMetaItems(renderedNext.value) : [])
-const showNextPanel = computed(() => Boolean(renderedCurrent.value))
+const nextMetaItems = computed(() => nextActivity.value ? getMetaItems(nextActivity.value) : [])
 const shouldTriggerPixelPal = computed(() => {
   const queryValue = route.query.pixelPal
   const normalized = Array.isArray(queryValue) ? queryValue[0] : queryValue
 
   return normalized === '1' || normalized === 'true' || normalized === 'yes'
 })
+const layoutSignature = computed(() => [
+  clockTimeText.value,
+  clockDateText.value,
+  primaryActivity.value?.id ?? '',
+  primaryActivity.value?.title ?? '',
+  nextActivity.value?.id ?? '',
+  nextActivity.value?.title ?? '',
+  laterActivities.value.map(activity => `${activity.id}:${activity.start}:${activity.title}`).join('|'),
+  primaryMetaItems.value.map(item => `${item.key}:${item.value}`).join('|'),
+  nextMetaItems.value.map(item => `${item.key}:${item.value}`).join('|'),
+].join('||'))
 
 function getSignboardPath(targetRoomId: string = roomId.value) {
   return `/rooms/${encodeURIComponent(targetRoomId)}/signboard`
@@ -121,13 +146,25 @@ function buildApiUrl(path: string) {
   return apiBaseUrl.value ? new URL(path, apiBaseUrl.value).toString() : path
 }
 
-function applyRoomSnapshot(snapshot: Partial<RoomSignboardSnapshotContract> | null | undefined, targetRoomId: string = roomId.value) {
-  roomState.value = {
+function createRoomSnapshot(snapshot: Partial<RoomSignboardSnapshotContract> | null | undefined = null, targetRoomId: string = roomId.value): RoomSignboardSnapshot {
+  return {
     roomId: String(snapshot?.roomId ?? targetRoomId),
     name: String(snapshot?.name ?? targetRoomId),
     schedule: normalizeSchedule(snapshot?.schedule),
     updatedAtUtc: snapshot?.updatedAtUtc ? String(snapshot.updatedAtUtc) : undefined,
   }
+}
+
+function applyRoomSnapshot(snapshot: Partial<RoomSignboardSnapshotContract> | null | undefined, targetRoomId: string = roomId.value) {
+  roomState.value = createRoomSnapshot(snapshot, targetRoomId)
+}
+
+function isActiveRoomSnapshot(snapshot: Partial<RoomSignboardSnapshotContract> | null | undefined) {
+  if (!snapshot) {
+    return false
+  }
+
+  return !snapshot.roomId || String(snapshot.roomId) === roomId.value
 }
 
 function fitTitleElement(container: HTMLElement | null, maxRem: number, minRem: number) {
@@ -189,32 +226,17 @@ function syncLaterTodayPanelHeight() {
 }
 
 function fitMetaValues() {
-  document.querySelectorAll<HTMLElement>('.meta-value').forEach((container) => {
+  dashboard.value?.querySelectorAll<HTMLElement>('.meta-value').forEach((container) => {
     const isPrimary = Boolean(container.closest('.activity-card.current, .activity-card.upcoming-main'))
     fitSingleLineElement(container, isPrimary ? 4 : 3.25, isPrimary ? 1.75 : 1.5)
   })
 }
 
-function renderActivityState(currentTime: Date) {
-  const state = getScheduleState(sortedSchedule.value, currentTime)
-
-  renderedNow.value = new Date(currentTime.getTime())
-  renderedCurrent.value = state.current ? { ...state.current } : null
-  renderedNext.value = state.next ? { ...state.next } : null
-  renderedLaterActivities.value = getActivitiesAfterNext(sortedSchedule.value, state.next).map(activity => ({ ...activity }))
-
-  nextTick(() => {
-    fitClockTime()
-    syncLaterTodayPanelHeight()
-    fitActivityTitles()
-    fitMetaValues()
-  })
-}
-
-function refreshDashboard(currentTime: Date = now.value) {
-  const state = getScheduleState(sortedSchedule.value, currentTime)
-  seatingAlertMessage.value = getSeatingAlertMessage(state.next, currentTime)
-  renderActivityState(currentTime)
+function fitDashboardLayout() {
+  fitClockTime()
+  syncLaterTodayPanelHeight()
+  fitActivityTitles()
+  fitMetaValues()
 }
 
 function closeRoomStream() {
@@ -238,78 +260,65 @@ function syncRoomChannel(targetRoomId: string = roomId.value) {
 }
 
 watch(roomId, (nextRoomId) => {
-  applyRoomSnapshot(null, nextRoomId)
+  roomState.value = createRoomSnapshot(null, nextRoomId)
   syncRoomChannel(nextRoomId)
 }, {
   immediate: true,
 })
 
 watch(roomQuery.data, (snapshot) => {
-  if (!snapshot) {
-    return
-  }
-
-  if (snapshot.roomId && String(snapshot.roomId) !== roomId.value) {
+  if (!isActiveRoomSnapshot(snapshot)) {
     return
   }
 
   applyRoomSnapshot(snapshot, roomId.value)
 }, {
-  immediate: true,
-})
-
-watch(schedule, () => {
-  refreshDashboard(now.value)
-}, {
-  deep: true,
   immediate: true,
 })
 
 watch(roomStreamData, (snapshot) => {
-  if (!snapshot) {
-    return
-  }
-
-  if (snapshot.roomId && String(snapshot.roomId) !== roomId.value) {
+  if (!isActiveRoomSnapshot(snapshot)) {
     return
   }
 
   applyRoomSnapshot(snapshot, roomId.value)
 })
 
-onMounted(() => {
-  refreshDashboard(now.value)
-
-  resizeHandler = () => {
-    fitClockTime()
-    syncLaterTodayPanelHeight()
-    fitActivityTitles()
-    fitMetaValues()
+watch(layoutSignature, () => {
+  if (!import.meta.client) {
+    return
   }
 
-  window.addEventListener('resize', resizeHandler)
+  fitDashboardLayout()
+}, {
+  flush: 'post',
+  immediate: true,
+})
 
-  tickIntervalId = window.setInterval(() => {
-    now.value = new Date()
-    refreshDashboard(now.value)
-  }, 1000)
+useEventListener(window, 'resize', fitDashboardLayout, {
+  passive: true,
+})
+
+const { pause: stopClock, resume: startClock } = useIntervalFn(() => {
+  now.value = new Date()
+}, 1000, {
+  immediate: false,
+})
+
+onMounted(() => {
+  now.value = new Date()
+  startClock()
 })
 
 onBeforeUnmount(() => {
   closeRoomStream()
-
-  if (tickIntervalId !== null) {
-    window.clearInterval(tickIntervalId)
-  }
-
-  if (resizeHandler) {
-    window.removeEventListener('resize', resizeHandler)
-  }
+  stopClock()
 })
 </script>
 
 <template>
   <main
+    ref="dashboard"
     class="dashboard flex min-h-screen flex-col gap-3 bg-linear-to-b from-slate-100 via-slate-50 to-slate-200 p-4 text-slate-900 antialiased [text-rendering:optimizeLegibility] dark:from-slate-900 dark:via-slate-950 dark:to-slate-950 dark:text-slate-50 lg:gap-4 lg:p-5 xl:p-6"
   >
     <LazyEasterEggsPixelPal :trigger="shouldTriggerPixelPal" />
@@ -331,7 +340,7 @@ onBeforeUnmount(() => {
       </div>
 
       <aside
-        v-if="renderedLaterActivities.length"
+        v-if="laterActivities.length"
         ref="laterTodayPanel"
         class="grid h-fit w-full min-w-0 max-w-xl grid-rows-[auto_minmax(0,1fr)] gap-3 overflow-hidden rounded-2xl border border-slate-200 bg-white/90 p-4 shadow-lg shadow-slate-900/10 backdrop-blur-sm dark:border-slate-700 dark:bg-slate-900/90 dark:shadow-black/30 lg:justify-self-end"
       >
@@ -340,7 +349,7 @@ onBeforeUnmount(() => {
         </div>
         <div class="grid min-h-0 gap-2 overflow-auto pr-1">
           <div
-            v-for="activity in renderedLaterActivities"
+            v-for="activity in laterActivities"
             :key="activity.id"
             class="flex items-start gap-2"
           >
@@ -378,20 +387,10 @@ onBeforeUnmount(() => {
     >
       <article
         class="activity-card flex min-h-0 flex-col gap-3 rounded-2xl p-5 lg:p-6"
-        :class="[
-          showNextPanel ? 'lg:col-span-3' : '',
-          primaryCardClass,
-          primaryCardClass === 'current'
-            ? 'border-4 border-amber-300 bg-linear-to-b from-amber-50 to-amber-100 shadow-xl shadow-amber-900/10 dark:border-amber-500/50 dark:from-amber-950/60 dark:to-amber-900/40 dark:shadow-black/30'
-            : 'border-2 border-slate-300 bg-linear-to-b from-slate-50 to-slate-100 shadow-lg shadow-slate-900/10 dark:border-slate-700 dark:from-slate-900 dark:to-slate-950 dark:shadow-black/30',
-        ]"
+        :class="primaryCardClasses"
       >
         <div class="flex items-center justify-start">
-          <div
-            :class="showUpcomingAsPrimary
-              ? 'inline-flex rounded-full border border-slate-300/70 bg-slate-200/80 px-3 py-2 text-lg font-bold uppercase tracking-widest text-slate-600 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300'
-              : 'inline-flex rounded-full border border-amber-300/60 bg-amber-200/60 px-3 py-2 text-lg font-extrabold uppercase tracking-widest text-amber-800 dark:border-amber-500/30 dark:bg-amber-500/15 dark:text-amber-300'"
-          >
+          <div :class="primaryLabelClasses">
             {{ primaryLabel }}
           </div>
         </div>
@@ -399,9 +398,7 @@ onBeforeUnmount(() => {
         <h2
           ref="currentTitle"
           class="m-0 flex flex-1 items-center text-balance font-black leading-none tracking-tight"
-          :class="primaryCardClass === 'current'
-            ? 'text-7xl text-amber-950 dark:text-amber-100 md:text-8xl 2xl:text-9xl'
-            : 'text-6xl text-slate-800 dark:text-slate-50 md:text-7xl xl:text-8xl'"
+          :class="primaryTitleClasses"
         >
           <template v-if="primaryActivity">
             {{ primaryActivity.title }}
@@ -458,8 +455,8 @@ onBeforeUnmount(() => {
           ref="nextTitle"
           class="m-0 flex flex-1 items-center text-balance text-5xl font-black leading-none tracking-tight text-slate-800 dark:text-slate-50 md:text-6xl xl:text-7xl"
         >
-          <template v-if="renderedNext">
-            {{ renderedNext.title }}
+          <template v-if="nextActivity">
+            {{ nextActivity.title }}
           </template>
           <template v-else>
             No upcoming activity
@@ -467,7 +464,7 @@ onBeforeUnmount(() => {
         </h2>
 
         <div class="grid content-start gap-3 sm:grid-cols-2">
-          <template v-if="renderedNext">
+          <template v-if="nextActivity">
             <div
               v-for="item in nextMetaItems"
               :key="`next-${item.key}`"
