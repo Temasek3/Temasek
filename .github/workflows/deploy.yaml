@@ -17,6 +17,7 @@ env:
   APP_NAME: "temasek-webapi"
   SERVICE_NAME: "temasek-webapi"
   REMOTE_ROOT: "/opt/temasek-webapi"
+  RELEASES_TO_KEEP: "10"
   SERVER_PORT: "22"
 
 jobs:
@@ -89,6 +90,7 @@ jobs:
           APP_NAME="${APP_NAME}"
           SERVICE_NAME="${SERVICE_NAME}"
           REMOTE_ROOT="${REMOTE_ROOT}"
+          RELEASES_TO_KEEP="${RELEASES_TO_KEEP}"
           RELEASE_ID="${RELEASE_ID}"
           BUNDLE="/tmp/\${APP_NAME}-\${RELEASE_ID}.tar.gz"
           RELEASE_DIR="\${REMOTE_ROOT}/releases/\${RELEASE_ID}"
@@ -113,7 +115,7 @@ jobs:
 
           sudo rm -f "\${BUNDLE}"
 
-          mapfile -t old_releases < <(sudo ls -1dt "\${REMOTE_ROOT}"/releases/* 2>/dev/null | tail -n +6 || true)
+          mapfile -t old_releases < <(sudo ls -1dt "\${REMOTE_ROOT}"/releases/* 2>/dev/null | tail -n "+$((RELEASES_TO_KEEP + 1))" || true)
           if [ "\${#old_releases[@]}" -gt 0 ]; then
             sudo rm -rf "\${old_releases[@]}"
           fi

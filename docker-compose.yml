@@ -1,11 +1,6 @@
 services:
   temasek:
-    build:
-      context: .
-      dockerfile: Dockerfile
-      args:
-        NUXT_PUBLIC_TEMASEK_WEBAPI_HTTPS: ${NUXT_PUBLIC_TEMASEK_WEBAPI_HTTPS:-}
-        NUXT_PUBLIC_CLERK_PUBLISHABLE_KEY: ${NUXT_PUBLIC_CLERK_PUBLISHABLE_KEY:-}
+    image: ghcr.io/temasek3/temasek:master
     restart: unless-stopped
     depends_on:
       db:
@@ -14,7 +9,7 @@ services:
       - "${TEMASEK_PORT:-8080}:8080"
     environment:
       ASPNETCORE_ENVIRONMENT: Production
-      ConnectionStrings__temasek: Server=db;Port=3306;Database=${MYSQL_DATABASE:-temasek};User ID=${MYSQL_USER:-temasek};Password=${MYSQL_PASSWORD:-temasek};SslMode=None;
+      ConnectionStrings__temasek: Server=db;Port=3306;AllowPublicKeyRetrieval=true;Database=${MYSQL_DATABASE:-temasek};User ID=${MYSQL_USER:-temasek};Password=${MYSQL_PASSWORD:-temasek};SslMode=None;
       Clerk__SecretKey: ${CLERK_SECRET_KEY:-}
       Clerk__AuthorizedParties: ${CLERK_AUTHORIZED_PARTIES:-}
       FormSg__SecretKey: ${FORMSG_SECRET_KEY:-}
