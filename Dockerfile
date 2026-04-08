@@ -19,8 +19,8 @@ RUN apk update
 RUN apk add git --no-cache
 
 # Prepare build deps ( ignore postinstall scripts for now )
-COPY package.json ./
-COPY pnpm-lock.yaml ./
+COPY Temasek.WebApp/package.json ./
+COPY Temasek.WebApp/pnpm-lock.yaml ./
 RUN pnpm i --frozen-lockfile --ignore-scripts
 
 # Copy all source files
