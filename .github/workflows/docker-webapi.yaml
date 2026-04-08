@@ -15,8 +15,6 @@ jobs:
   docker:
     runs-on: ubuntu-latest
 
-    environment: production
-
     permissions:
       contents: read
       packages: write
