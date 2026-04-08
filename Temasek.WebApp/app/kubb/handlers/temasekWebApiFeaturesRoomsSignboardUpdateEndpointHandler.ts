@@ -19,7 +19,7 @@ export function temasekWebApiFeaturesRoomsSignboardUpdateEndpointHandlerResponse
 export function temasekWebApiFeaturesRoomsSignboardUpdateEndpointHandler(data?: TemasekWebApiFeaturesRoomsSignboardUpdateEndpointMutationResponse | ((
         info: Parameters<Parameters<typeof http.put>[1]>[0],
       ) => Response | Promise<Response>)) {
-  return http.put(`/rooms/:roomId/signboard`, function handler(info) {
+  return http.put(`/api/rooms/:roomId/signboard`, function handler(info) {
       if(typeof data === 'function') return data(info)
 
       return new Response(JSON.stringify(data), {

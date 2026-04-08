@@ -17,6 +17,8 @@ definePageMeta({
   layout: 'rooms',
 })
 
+const ABSOLUTE_URL_PATTERN = /^https?:\/\//
+
 const route = useRoute()
 const runtimeConfig = useRuntimeConfig()
 
@@ -139,11 +141,11 @@ const layoutSignature = computed(() => [
 ].join('||'))
 
 function getSignboardPath(targetRoomId: string = roomId.value) {
-  return `/rooms/${encodeURIComponent(targetRoomId)}/signboard`
+  return `/api/rooms/${encodeURIComponent(targetRoomId)}/signboard`
 }
 
 function buildApiUrl(path: string) {
-  return apiBaseUrl.value ? new URL(path, apiBaseUrl.value).toString() : path
+  return ABSOLUTE_URL_PATTERN.test(apiBaseUrl.value) ? new URL(path, apiBaseUrl.value).toString() : path
 }
 
 function createRoomSnapshot(snapshot: Partial<RoomSignboardSnapshotContract> | null | undefined = null, targetRoomId: string = roomId.value): RoomSignboardSnapshot {

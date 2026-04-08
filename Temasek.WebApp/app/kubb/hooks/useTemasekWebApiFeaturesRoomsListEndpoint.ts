@@ -10,19 +10,19 @@ import type { TemasekWebApiFeaturesRoomsListEndpointQueryResponse } from "../typ
 import { queryOptions, useQuery } from "@tanstack/vue-query";
 import { toValue } from "vue";
 
-export const temasekWebApiFeaturesRoomsListEndpointQueryKey = () => [{ url: '/rooms' }] as const
+export const temasekWebApiFeaturesRoomsListEndpointQueryKey = () => [{ url: '/api/rooms' }] as const
 
 export type TemasekWebApiFeaturesRoomsListEndpointQueryKey = ReturnType<typeof temasekWebApiFeaturesRoomsListEndpointQueryKey>
 
 /**
- * {@link /rooms}
+ * {@link /api/rooms}
  */
 export async function temasekWebApiFeaturesRoomsListEndpoint(config: Partial<RequestConfig> & { client?: Client } = {}) {
   const { client: request = fetch, ...requestConfig } = config
 
 
 
-  const res = await request<TemasekWebApiFeaturesRoomsListEndpointQueryResponse, ResponseErrorConfig<Error>, unknown>({ method : "GET", url : `/rooms`, ... requestConfig })
+  const res = await request<TemasekWebApiFeaturesRoomsListEndpointQueryResponse, ResponseErrorConfig<Error>, unknown>({ method : "GET", url : `/api/rooms`, ... requestConfig })
   return res.data
 }
 
@@ -40,7 +40,7 @@ export function temasekWebApiFeaturesRoomsListEndpointQueryOptions(config: Parti
 }
 
 /**
- * {@link /rooms}
+ * {@link /api/rooms}
  */
 export function useTemasekWebApiFeaturesRoomsListEndpoint<TData = TemasekWebApiFeaturesRoomsListEndpointQueryResponse, TQueryData = TemasekWebApiFeaturesRoomsListEndpointQueryResponse, TQueryKey extends QueryKey = TemasekWebApiFeaturesRoomsListEndpointQueryKey>(options: 
 {

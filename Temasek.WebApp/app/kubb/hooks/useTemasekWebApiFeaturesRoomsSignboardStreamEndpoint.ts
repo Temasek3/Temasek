@@ -11,19 +11,19 @@ import type { MaybeRefOrGetter } from "vue";
 import { queryOptions, useQuery } from "@tanstack/vue-query";
 import { toValue } from "vue";
 
-export const temasekWebApiFeaturesRoomsSignboardStreamEndpointQueryKey = (roomId: MaybeRefOrGetter<TemasekWebApiFeaturesRoomsSignboardStreamEndpointPathParams["roomId"]>) => [{ url: '/rooms/:roomId/signboard/stream', params: {roomId:roomId} }] as const
+export const temasekWebApiFeaturesRoomsSignboardStreamEndpointQueryKey = (roomId: MaybeRefOrGetter<TemasekWebApiFeaturesRoomsSignboardStreamEndpointPathParams["roomId"]>) => [{ url: '/api/rooms/:roomId/signboard/stream', params: {roomId:roomId} }] as const
 
 export type TemasekWebApiFeaturesRoomsSignboardStreamEndpointQueryKey = ReturnType<typeof temasekWebApiFeaturesRoomsSignboardStreamEndpointQueryKey>
 
 /**
- * {@link /rooms/:roomId/signboard/stream}
+ * {@link /api/rooms/:roomId/signboard/stream}
  */
 export async function temasekWebApiFeaturesRoomsSignboardStreamEndpoint(roomId: TemasekWebApiFeaturesRoomsSignboardStreamEndpointPathParams["roomId"], config: Partial<RequestConfig> & { client?: Client } = {}) {
   const { client: request = fetch, ...requestConfig } = config
 
 
 
-  const res = await request<TemasekWebApiFeaturesRoomsSignboardStreamEndpointQueryResponse, ResponseErrorConfig<Error>, unknown>({ method : "GET", url : `/rooms/${roomId}/signboard/stream`, ... requestConfig })
+  const res = await request<TemasekWebApiFeaturesRoomsSignboardStreamEndpointQueryResponse, ResponseErrorConfig<Error>, unknown>({ method : "GET", url : `/api/rooms/${roomId}/signboard/stream`, ... requestConfig })
   return res.data
 }
 
@@ -41,7 +41,7 @@ export function temasekWebApiFeaturesRoomsSignboardStreamEndpointQueryOptions(ro
 }
 
 /**
- * {@link /rooms/:roomId/signboard/stream}
+ * {@link /api/rooms/:roomId/signboard/stream}
  */
 export function useTemasekWebApiFeaturesRoomsSignboardStreamEndpoint<TData = TemasekWebApiFeaturesRoomsSignboardStreamEndpointQueryResponse, TQueryData = TemasekWebApiFeaturesRoomsSignboardStreamEndpointQueryResponse, TQueryKey extends QueryKey = TemasekWebApiFeaturesRoomsSignboardStreamEndpointQueryKey>(roomId: MaybeRefOrGetter<TemasekWebApiFeaturesRoomsSignboardStreamEndpointPathParams["roomId"]>, options: 
 {

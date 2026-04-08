@@ -12,6 +12,6 @@ public class Endpoint : EndpointWithoutRequest
 
     public override Task HandleAsync(CancellationToken ct)
     {
-        return Send.RedirectAsync("/scalar");
+        return Send.RedirectAsync("/api/scalar");
     }
 }

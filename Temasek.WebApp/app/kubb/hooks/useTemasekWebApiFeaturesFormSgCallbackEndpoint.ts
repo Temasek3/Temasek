@@ -10,24 +10,24 @@ import type { TemasekWebApiFeaturesFormSgCallbackEndpointMutationRequest, Temase
 import type { MaybeRefOrGetter } from "vue";
 import { useMutation } from "@tanstack/vue-query";
 
-export const temasekWebApiFeaturesFormSgCallbackEndpointMutationKey = () => [{ url: '/formsg/callback' }] as const
+export const temasekWebApiFeaturesFormSgCallbackEndpointMutationKey = () => [{ url: '/api/formsg/callback' }] as const
 
 export type TemasekWebApiFeaturesFormSgCallbackEndpointMutationKey = ReturnType<typeof temasekWebApiFeaturesFormSgCallbackEndpointMutationKey>
 
 /**
- * {@link /formsg/callback}
+ * {@link /api/formsg/callback}
  */
 export async function temasekWebApiFeaturesFormSgCallbackEndpoint(data: TemasekWebApiFeaturesFormSgCallbackEndpointMutationRequest, config: Partial<RequestConfig<TemasekWebApiFeaturesFormSgCallbackEndpointMutationRequest>> & { client?: Client } = {}) {
   const { client: request = fetch, ...requestConfig } = config
 
   const requestData = data
 
-  const res = await request<TemasekWebApiFeaturesFormSgCallbackEndpointMutationResponse, ResponseErrorConfig<Error>, TemasekWebApiFeaturesFormSgCallbackEndpointMutationRequest>({ method : "POST", url : `/formsg/callback`, data : requestData, ... requestConfig })
+  const res = await request<TemasekWebApiFeaturesFormSgCallbackEndpointMutationResponse, ResponseErrorConfig<Error>, TemasekWebApiFeaturesFormSgCallbackEndpointMutationRequest>({ method : "POST", url : `/api/formsg/callback`, data : requestData, ... requestConfig })
   return res.data
 }
 
 /**
- * {@link /formsg/callback}
+ * {@link /api/formsg/callback}
  */
 export function useTemasekWebApiFeaturesFormSgCallbackEndpoint<TContext>(options: 
 {

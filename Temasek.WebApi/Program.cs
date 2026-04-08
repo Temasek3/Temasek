@@ -2,6 +2,7 @@ using Clerk.BackendAPI;
 using FastEndpoints;
 using FastEndpoints.Swagger;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Options;
 using Scalar.AspNetCore;
 using Temasek.WebApi.Clerk;
@@ -80,20 +81,57 @@ builder.Services.SwaggerDocument(options =>
 var app = builder.Build();
 
 app.UseCors();
+
 if (app.Environment.IsProduction())
 {
     app.UseHttpsRedirection();
 }
+
+var spaAssetsRoot = Path.Combine(app.Environment.WebRootPath, ".output", "public");
+var spaIndexFile = Path.Combine(spaAssetsRoot, "index.html");
+var hasSpaAssets = File.Exists(spaIndexFile);
+
+if (hasSpaAssets)
+{
+    var spaFileProvider = new PhysicalFileProvider(spaAssetsRoot);
+    app.UseDefaultFiles(new DefaultFilesOptions { FileProvider = spaFileProvider });
+    app.UseStaticFiles(new StaticFileOptions { FileProvider = spaFileProvider });
+}
+
 app.UseAuthentication();
 app.UseAuthorization();
-app.UseFastEndpoints();
+app.UseFastEndpoints(config =>
+{
+    config.Endpoints.RoutePrefix = "api";
+});
 app.UseSwaggerGen(options =>
 {
-    options.Path = "/openapi/{documentName}.json";
+    options.Path = "/api/openapi/{documentName}.json";
 });
 
 app.MapDefaultEndpoints();
-app.MapScalarApiReference();
+app.MapScalarApiReference(
+    "/api/scalar",
+    options =>
+    {
+        options.WithOpenApiRoutePattern("/api/openapi/{documentName}.json");
+    }
+);
+
+if (hasSpaAssets)
+{
+    app.MapFallback(async context =>
+    {
+        if (context.Request.Path.StartsWithSegments("/api"))
+        {
+            context.Response.StatusCode = StatusCodes.Status404NotFound;
+            return;
+        }
+
+        context.Response.ContentType = "text/html; charset=utf-8";
+        await context.Response.SendFileAsync(spaIndexFile);
+    });
+}
 
 app.Run();
 

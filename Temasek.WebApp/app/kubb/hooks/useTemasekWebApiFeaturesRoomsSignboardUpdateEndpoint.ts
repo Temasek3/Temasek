@@ -10,24 +10,24 @@ import type { TemasekWebApiFeaturesRoomsSignboardUpdateEndpointMutationRequest, 
 import type { MaybeRefOrGetter } from "vue";
 import { useMutation } from "@tanstack/vue-query";
 
-export const temasekWebApiFeaturesRoomsSignboardUpdateEndpointMutationKey = () => [{ url: '/rooms/:roomId/signboard' }] as const
+export const temasekWebApiFeaturesRoomsSignboardUpdateEndpointMutationKey = () => [{ url: '/api/rooms/:roomId/signboard' }] as const
 
 export type TemasekWebApiFeaturesRoomsSignboardUpdateEndpointMutationKey = ReturnType<typeof temasekWebApiFeaturesRoomsSignboardUpdateEndpointMutationKey>
 
 /**
- * {@link /rooms/:roomId/signboard}
+ * {@link /api/rooms/:roomId/signboard}
  */
 export async function temasekWebApiFeaturesRoomsSignboardUpdateEndpoint(roomId: TemasekWebApiFeaturesRoomsSignboardUpdateEndpointPathParams["roomId"], data: TemasekWebApiFeaturesRoomsSignboardUpdateEndpointMutationRequest, config: Partial<RequestConfig<TemasekWebApiFeaturesRoomsSignboardUpdateEndpointMutationRequest>> & { client?: Client } = {}) {
   const { client: request = fetch, ...requestConfig } = config
 
   const requestData = data
 
-  const res = await request<TemasekWebApiFeaturesRoomsSignboardUpdateEndpointMutationResponse, ResponseErrorConfig<Error>, TemasekWebApiFeaturesRoomsSignboardUpdateEndpointMutationRequest>({ method : "PUT", url : `/rooms/${roomId}/signboard`, data : requestData, ... requestConfig })
+  const res = await request<TemasekWebApiFeaturesRoomsSignboardUpdateEndpointMutationResponse, ResponseErrorConfig<Error>, TemasekWebApiFeaturesRoomsSignboardUpdateEndpointMutationRequest>({ method : "PUT", url : `/api/rooms/${roomId}/signboard`, data : requestData, ... requestConfig })
   return res.data
 }
 
 /**
- * {@link /rooms/:roomId/signboard}
+ * {@link /api/rooms/:roomId/signboard}
  */
 export function useTemasekWebApiFeaturesRoomsSignboardUpdateEndpoint<TContext>(options: 
 {

@@ -9,7 +9,7 @@ import { pluginZod } from '@kubb/plugin-zod'
 export default defineConfig({
   root: '.',
   input: {
-    path: 'http://localhost:5149/openapi/v1.json',
+    path: 'http://localhost:5149/api/openapi/v1.json',
   },
   output: {
     path: './app/kubb',

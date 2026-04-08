@@ -19,7 +19,7 @@ export function temasekWebApiFeaturesRoomsCreateEndpointHandlerResponse200(data:
 export function temasekWebApiFeaturesRoomsCreateEndpointHandler(data?: TemasekWebApiFeaturesRoomsCreateEndpointMutationResponse | ((
         info: Parameters<Parameters<typeof http.post>[1]>[0],
       ) => Response | Promise<Response>)) {
-  return http.post(`/rooms`, function handler(info) {
+  return http.post(`/api/rooms`, function handler(info) {
       if(typeof data === 'function') return data(info)
 
       return new Response(JSON.stringify(data), {

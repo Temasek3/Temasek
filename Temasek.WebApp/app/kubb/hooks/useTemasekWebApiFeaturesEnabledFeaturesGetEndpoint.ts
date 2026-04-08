@@ -10,19 +10,19 @@ import type { TemasekWebApiFeaturesEnabledFeaturesGetEndpointQueryResponse } fro
 import { queryOptions, useQuery } from "@tanstack/vue-query";
 import { toValue } from "vue";
 
-export const temasekWebApiFeaturesEnabledFeaturesGetEndpointQueryKey = () => [{ url: '/enabled-features' }] as const
+export const temasekWebApiFeaturesEnabledFeaturesGetEndpointQueryKey = () => [{ url: '/api/enabled-features' }] as const
 
 export type TemasekWebApiFeaturesEnabledFeaturesGetEndpointQueryKey = ReturnType<typeof temasekWebApiFeaturesEnabledFeaturesGetEndpointQueryKey>
 
 /**
- * {@link /enabled-features}
+ * {@link /api/enabled-features}
  */
 export async function temasekWebApiFeaturesEnabledFeaturesGetEndpoint(config: Partial<RequestConfig> & { client?: Client } = {}) {
   const { client: request = fetch, ...requestConfig } = config
 
 
 
-  const res = await request<TemasekWebApiFeaturesEnabledFeaturesGetEndpointQueryResponse, ResponseErrorConfig<Error>, unknown>({ method : "GET", url : `/enabled-features`, ... requestConfig })
+  const res = await request<TemasekWebApiFeaturesEnabledFeaturesGetEndpointQueryResponse, ResponseErrorConfig<Error>, unknown>({ method : "GET", url : `/api/enabled-features`, ... requestConfig })
   return res.data
 }
 
@@ -40,7 +40,7 @@ export function temasekWebApiFeaturesEnabledFeaturesGetEndpointQueryOptions(conf
 }
 
 /**
- * {@link /enabled-features}
+ * {@link /api/enabled-features}
  */
 export function useTemasekWebApiFeaturesEnabledFeaturesGetEndpoint<TData = TemasekWebApiFeaturesEnabledFeaturesGetEndpointQueryResponse, TQueryData = TemasekWebApiFeaturesEnabledFeaturesGetEndpointQueryResponse, TQueryKey extends QueryKey = TemasekWebApiFeaturesEnabledFeaturesGetEndpointQueryKey>(options: 
 {

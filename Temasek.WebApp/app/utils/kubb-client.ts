@@ -15,6 +15,8 @@ export type Client = <TResponseData, _TError = unknown, TRequestData = unknown>(
   config: RequestConfig<TRequestData>,
 ) => Promise<ResponseConfig<TResponseData>>
 
+const ABSOLUTE_URL_PATTERN = /^https?:\/\//
+
 function normalizeHeaders(headers?: BaseRequestConfig['headers']): Record<string, string> {
   if (!headers) {
     return {}
@@ -25,6 +27,12 @@ function normalizeHeaders(headers?: BaseRequestConfig['headers']): Record<string
 
 function hasHeader(headers: Record<string, string>, name: string) {
   return Object.keys(headers).some(key => key.toLowerCase() === name.toLowerCase())
+}
+
+function resolveApiBaseUrl(baseUrl?: string) {
+  const normalized = String(baseUrl ?? '').trim()
+
+  return ABSOLUTE_URL_PATTERN.test(normalized) ? normalized : undefined
 }
 
 function resolveRequestHeaders(
@@ -88,7 +96,7 @@ const kubbClient: Client = async (config) => {
 
   return fetchClient({
     ...requestConfig,
-    baseURL: requestConfig.baseURL ?? runtimeConfig.public.temasekWebApiHttps,
+    baseURL: requestConfig.baseURL ?? resolveApiBaseUrl(runtimeConfig.public.temasekWebApiHttps),
     headers: resolveRequestHeaders(requestConfig, normalizedHeaders, authHeaders),
   })
 }

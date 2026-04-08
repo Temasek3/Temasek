@@ -10,24 +10,24 @@ import type { TemasekWebApiFeaturesRoomsCreateEndpointMutationRequest, TemasekWe
 import type { MaybeRefOrGetter } from "vue";
 import { useMutation } from "@tanstack/vue-query";
 
-export const temasekWebApiFeaturesRoomsCreateEndpointMutationKey = () => [{ url: '/rooms' }] as const
+export const temasekWebApiFeaturesRoomsCreateEndpointMutationKey = () => [{ url: '/api/rooms' }] as const
 
 export type TemasekWebApiFeaturesRoomsCreateEndpointMutationKey = ReturnType<typeof temasekWebApiFeaturesRoomsCreateEndpointMutationKey>
 
 /**
- * {@link /rooms}
+ * {@link /api/rooms}
  */
 export async function temasekWebApiFeaturesRoomsCreateEndpoint(data: TemasekWebApiFeaturesRoomsCreateEndpointMutationRequest, config: Partial<RequestConfig<TemasekWebApiFeaturesRoomsCreateEndpointMutationRequest>> & { client?: Client } = {}) {
   const { client: request = fetch, ...requestConfig } = config
 
   const requestData = data
 
-  const res = await request<TemasekWebApiFeaturesRoomsCreateEndpointMutationResponse, ResponseErrorConfig<Error>, TemasekWebApiFeaturesRoomsCreateEndpointMutationRequest>({ method : "POST", url : `/rooms`, data : requestData, ... requestConfig })
+  const res = await request<TemasekWebApiFeaturesRoomsCreateEndpointMutationResponse, ResponseErrorConfig<Error>, TemasekWebApiFeaturesRoomsCreateEndpointMutationRequest>({ method : "POST", url : `/api/rooms`, data : requestData, ... requestConfig })
   return res.data
 }
 
 /**
- * {@link /rooms}
+ * {@link /api/rooms}
  */
 export function useTemasekWebApiFeaturesRoomsCreateEndpoint<TContext>(options: 
 {

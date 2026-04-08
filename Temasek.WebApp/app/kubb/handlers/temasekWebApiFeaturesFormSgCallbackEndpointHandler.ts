@@ -17,7 +17,7 @@ export function temasekWebApiFeaturesFormSgCallbackEndpointHandlerResponse204(da
 export function temasekWebApiFeaturesFormSgCallbackEndpointHandler(data?: string | number | boolean | null | object | ((
         info: Parameters<Parameters<typeof http.post>[1]>[0],
       ) => Response | Promise<Response>)) {
-  return http.post(`/formsg/callback`, function handler(info) {
+  return http.post(`/api/formsg/callback`, function handler(info) {
       if(typeof data === 'function') return data(info)
 
       return new Response(JSON.stringify(data), {

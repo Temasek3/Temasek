@@ -10,19 +10,19 @@ import type { TemasekWebApiFeaturesIndexGetEndpointQueryResponse } from "../type
 import { queryOptions, useQuery } from "@tanstack/vue-query";
 import { toValue } from "vue";
 
-export const temasekWebApiFeaturesIndexGetEndpointQueryKey = () => [{ url: '/' }] as const
+export const temasekWebApiFeaturesIndexGetEndpointQueryKey = () => [{ url: '/api' }] as const
 
 export type TemasekWebApiFeaturesIndexGetEndpointQueryKey = ReturnType<typeof temasekWebApiFeaturesIndexGetEndpointQueryKey>
 
 /**
- * {@link /}
+ * {@link /api}
  */
 export async function temasekWebApiFeaturesIndexGetEndpoint(config: Partial<RequestConfig> & { client?: Client } = {}) {
   const { client: request = fetch, ...requestConfig } = config
 
 
 
-  const res = await request<TemasekWebApiFeaturesIndexGetEndpointQueryResponse, ResponseErrorConfig<Error>, unknown>({ method : "GET", url : `/`, ... requestConfig })
+  const res = await request<TemasekWebApiFeaturesIndexGetEndpointQueryResponse, ResponseErrorConfig<Error>, unknown>({ method : "GET", url : `/api`, ... requestConfig })
   return res.data
 }
 
@@ -40,7 +40,7 @@ export function temasekWebApiFeaturesIndexGetEndpointQueryOptions(config: Partia
 }
 
 /**
- * {@link /}
+ * {@link /api}
  */
 export function useTemasekWebApiFeaturesIndexGetEndpoint<TData = TemasekWebApiFeaturesIndexGetEndpointQueryResponse, TQueryData = TemasekWebApiFeaturesIndexGetEndpointQueryResponse, TQueryKey extends QueryKey = TemasekWebApiFeaturesIndexGetEndpointQueryKey>(options: 
 {

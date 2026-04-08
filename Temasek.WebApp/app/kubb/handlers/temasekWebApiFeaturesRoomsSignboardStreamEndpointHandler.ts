@@ -17,7 +17,7 @@ export function temasekWebApiFeaturesRoomsSignboardStreamEndpointHandlerResponse
 export function temasekWebApiFeaturesRoomsSignboardStreamEndpointHandler(data?: string | number | boolean | null | object | ((
         info: Parameters<Parameters<typeof http.get>[1]>[0],
       ) => Response | Promise<Response>)) {
-  return http.get(`/rooms/:roomId/signboard/stream`, function handler(info) {
+  return http.get(`/api/rooms/:roomId/signboard/stream`, function handler(info) {
       if(typeof data === 'function') return data(info)
 
       return new Response(JSON.stringify(data), {

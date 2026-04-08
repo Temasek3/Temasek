@@ -10,19 +10,19 @@ import type { TemasekWebApiFeaturesFormSgValidateEndpointQueryResponse, TemasekW
 import { queryOptions, useQuery } from "@tanstack/vue-query";
 import { toValue } from "vue";
 
-export const temasekWebApiFeaturesFormSgValidateEndpointQueryKey = () => [{ url: '/formsg/validate' }] as const
+export const temasekWebApiFeaturesFormSgValidateEndpointQueryKey = () => [{ url: '/api/formsg/validate' }] as const
 
 export type TemasekWebApiFeaturesFormSgValidateEndpointQueryKey = ReturnType<typeof temasekWebApiFeaturesFormSgValidateEndpointQueryKey>
 
 /**
- * {@link /formsg/validate}
+ * {@link /api/formsg/validate}
  */
 export async function temasekWebApiFeaturesFormSgValidateEndpoint(config: Partial<RequestConfig> & { client?: Client } = {}) {
   const { client: request = fetch, ...requestConfig } = config
 
 
 
-  const res = await request<TemasekWebApiFeaturesFormSgValidateEndpointQueryResponse, ResponseErrorConfig<TemasekWebApiFeaturesFormSgValidateEndpoint401>, unknown>({ method : "GET", url : `/formsg/validate`, ... requestConfig })
+  const res = await request<TemasekWebApiFeaturesFormSgValidateEndpointQueryResponse, ResponseErrorConfig<TemasekWebApiFeaturesFormSgValidateEndpoint401>, unknown>({ method : "GET", url : `/api/formsg/validate`, ... requestConfig })
   return res.data
 }
 
@@ -40,7 +40,7 @@ export function temasekWebApiFeaturesFormSgValidateEndpointQueryOptions(config: 
 }
 
 /**
- * {@link /formsg/validate}
+ * {@link /api/formsg/validate}
  */
 export function useTemasekWebApiFeaturesFormSgValidateEndpoint<TData = TemasekWebApiFeaturesFormSgValidateEndpointQueryResponse, TQueryData = TemasekWebApiFeaturesFormSgValidateEndpointQueryResponse, TQueryKey extends QueryKey = TemasekWebApiFeaturesFormSgValidateEndpointQueryKey>(options: 
 {

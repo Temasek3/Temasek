@@ -42,6 +42,8 @@ definePageMeta({
   layout: 'rooms',
 })
 
+const ABSOLUTE_URL_PATTERN = /^https?:\/\//
+
 const route = useRoute()
 const runtimeConfig = useRuntimeConfig()
 const queryClient = useQueryClient()
@@ -175,11 +177,11 @@ const primaryMetaItems = computed(() => primaryActivity.value ? getMetaItems(pri
 const seatingAlertMessage = computed(() => getSeatingAlertMessage(renderedNext.value, now.value))
 
 function getSignboardPath(targetRoomId: string = roomId.value) {
-  return `/rooms/${encodeURIComponent(targetRoomId)}/signboard`
+  return `/api/rooms/${encodeURIComponent(targetRoomId)}/signboard`
 }
 
 function buildApiUrl(path: string) {
-  return apiBaseUrl.value ? new URL(path, apiBaseUrl.value).toString() : path
+  return ABSOLUTE_URL_PATTERN.test(apiBaseUrl.value) ? new URL(path, apiBaseUrl.value).toString() : path
 }
 
 function createEmptyForm(sourceSchedule: SignboardActivity[] = sortedSchedule.value): SignboardFormState {
@@ -696,7 +698,7 @@ onBeforeUnmount(() => {
                   label="Schedule JSON"
                   description="Each activity should include title, start, end, personnel and location. Times must use HH:mm."
                 >
-                  <UTextarea
+                  <LazyUTextarea
                     :model-value="jsonEditorText" :rows="18" class="w-full font-mono text-sm"
                     @update:model-value="onJsonEditorUpdate"
                   />

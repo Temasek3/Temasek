@@ -29,7 +29,9 @@ export default defineNuxtConfig({
 
   runtimeConfig: {
     public: {
-      temasekWebApiHttps: process.env.NUXT_PUBLIC_TEMASEK_WEBAPI_HTTPS ?? process.env.TEMASEK_WEBAPI_HTTPS ?? '',
+      temasekWebApiHttps: process.env.NUXT_PUBLIC_TEMASEK_WEBAPI_HTTPS // Docker
+        ?? process.env.TEMASEK_WEBAPI_HTTPS // Aspire
+        ?? '',
     },
   },
 
@@ -47,7 +49,7 @@ export default defineNuxtConfig({
 
   clerk: {
     skipServerMiddleware: true,
-    publishableKey: process.env.NUXT_PUBLIC_CLERK_PUBLISHABLE_KEY,
+    publishableKey: process.env.NUXT_PUBLIC_CLERK_PUBLISHABLE_KEY || 'pk_test_cmVsaWV2ZWQtc3dpZnQtNTEuY2xlcmsuYWNjb3VudHMuZGV2JA',
   },
 
   typescript: {
@@ -55,6 +57,12 @@ export default defineNuxtConfig({
       compilerOptions: {
         allowImportingTsExtensions: true,
       },
+    },
+  },
+
+  nitro: {
+    output: {
+      dir: '../Temasek.WebApi/wwwroot/.output',
     },
   },
 })

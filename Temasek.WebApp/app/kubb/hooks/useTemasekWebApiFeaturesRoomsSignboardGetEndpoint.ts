@@ -11,19 +11,19 @@ import type { MaybeRefOrGetter } from "vue";
 import { queryOptions, useQuery } from "@tanstack/vue-query";
 import { toValue } from "vue";
 
-export const temasekWebApiFeaturesRoomsSignboardGetEndpointQueryKey = (roomId: MaybeRefOrGetter<TemasekWebApiFeaturesRoomsSignboardGetEndpointPathParams["roomId"]>) => [{ url: '/rooms/:roomId/signboard', params: {roomId:roomId} }] as const
+export const temasekWebApiFeaturesRoomsSignboardGetEndpointQueryKey = (roomId: MaybeRefOrGetter<TemasekWebApiFeaturesRoomsSignboardGetEndpointPathParams["roomId"]>) => [{ url: '/api/rooms/:roomId/signboard', params: {roomId:roomId} }] as const
 
 export type TemasekWebApiFeaturesRoomsSignboardGetEndpointQueryKey = ReturnType<typeof temasekWebApiFeaturesRoomsSignboardGetEndpointQueryKey>
 
 /**
- * {@link /rooms/:roomId/signboard}
+ * {@link /api/rooms/:roomId/signboard}
  */
 export async function temasekWebApiFeaturesRoomsSignboardGetEndpoint(roomId: TemasekWebApiFeaturesRoomsSignboardGetEndpointPathParams["roomId"], config: Partial<RequestConfig> & { client?: Client } = {}) {
   const { client: request = fetch, ...requestConfig } = config
 
 
 
-  const res = await request<TemasekWebApiFeaturesRoomsSignboardGetEndpointQueryResponse, ResponseErrorConfig<Error>, unknown>({ method : "GET", url : `/rooms/${roomId}/signboard`, ... requestConfig })
+  const res = await request<TemasekWebApiFeaturesRoomsSignboardGetEndpointQueryResponse, ResponseErrorConfig<Error>, unknown>({ method : "GET", url : `/api/rooms/${roomId}/signboard`, ... requestConfig })
   return res.data
 }
 
@@ -41,7 +41,7 @@ export function temasekWebApiFeaturesRoomsSignboardGetEndpointQueryOptions(roomI
 }
 
 /**
- * {@link /rooms/:roomId/signboard}
+ * {@link /api/rooms/:roomId/signboard}
  */
 export function useTemasekWebApiFeaturesRoomsSignboardGetEndpoint<TData = TemasekWebApiFeaturesRoomsSignboardGetEndpointQueryResponse, TQueryData = TemasekWebApiFeaturesRoomsSignboardGetEndpointQueryResponse, TQueryKey extends QueryKey = TemasekWebApiFeaturesRoomsSignboardGetEndpointQueryKey>(roomId: MaybeRefOrGetter<TemasekWebApiFeaturesRoomsSignboardGetEndpointPathParams["roomId"]>, options: 
 {

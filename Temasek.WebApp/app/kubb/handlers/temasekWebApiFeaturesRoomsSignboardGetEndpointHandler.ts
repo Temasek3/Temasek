@@ -19,7 +19,7 @@ export function temasekWebApiFeaturesRoomsSignboardGetEndpointHandlerResponse200
 export function temasekWebApiFeaturesRoomsSignboardGetEndpointHandler(data?: TemasekWebApiFeaturesRoomsSignboardGetEndpointQueryResponse | ((
         info: Parameters<Parameters<typeof http.get>[1]>[0],
       ) => Response | Promise<Response>)) {
-  return http.get(`/rooms/:roomId/signboard`, function handler(info) {
+  return http.get(`/api/rooms/:roomId/signboard`, function handler(info) {
       if(typeof data === 'function') return data(info)
 
       return new Response(JSON.stringify(data), {

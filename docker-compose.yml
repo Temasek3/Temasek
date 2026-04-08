@@ -1,0 +1,47 @@
+services:
+  temasek:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        NUXT_PUBLIC_TEMASEK_WEBAPI_HTTPS: ${NUXT_PUBLIC_TEMASEK_WEBAPI_HTTPS:-}
+        NUXT_PUBLIC_CLERK_PUBLISHABLE_KEY: ${NUXT_PUBLIC_CLERK_PUBLISHABLE_KEY:-}
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "${TEMASEK_PORT:-8080}:8080"
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ConnectionStrings__temasek: Server=db;Port=3306;Database=${MYSQL_DATABASE:-temasek};User ID=${MYSQL_USER:-temasek};Password=${MYSQL_PASSWORD:-temasek};SslMode=None;
+      Clerk__SecretKey: ${CLERK_SECRET_KEY:-}
+      Clerk__AuthorizedParties: ${CLERK_AUTHORIZED_PARTIES:-}
+      FormSg__SecretKey: ${FORMSG_SECRET_KEY:-}
+      FormSg__CallbackApiKey: ${FORMSG_CALLBACK_API_KEY:-}
+      Facilities__Enabled: ${FACILITIES_ENABLED:-false}
+      Facilities__ServiceAccountJsonCredential: ${FACILITIES_SERVICE_ACCOUNT_JSON_CREDENTIAL:-}
+      Facilities__CalendarId: ${FACILITIES_CALENDAR_ID:-}
+      Facilities__CarbonCopyCalendarId: ${FACILITIES_CARBON_COPY_CALENDAR_ID:-}
+
+  db:
+    image: mysql:8.4
+    restart: unless-stopped
+    ports:
+      - "${MYSQL_PORT:-3306}:3306"
+    environment:
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-temasek}
+      MYSQL_USER: ${MYSQL_USER:-temasek}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-temasek}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-temasek-root}
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -uroot -p$$MYSQL_ROOT_PASSWORD || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+volumes:
+  mysql_data:

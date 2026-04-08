@@ -10,19 +10,19 @@ import type { TemasekWebApiFeaturesPokedexListEndpointQueryResponse, TemasekWebA
 import { queryOptions, useQuery } from "@tanstack/vue-query";
 import { toValue } from "vue";
 
-export const temasekWebApiFeaturesPokedexListEndpointQueryKey = () => [{ url: '/pokedex' }] as const
+export const temasekWebApiFeaturesPokedexListEndpointQueryKey = () => [{ url: '/api/pokedex' }] as const
 
 export type TemasekWebApiFeaturesPokedexListEndpointQueryKey = ReturnType<typeof temasekWebApiFeaturesPokedexListEndpointQueryKey>
 
 /**
- * {@link /pokedex}
+ * {@link /api/pokedex}
  */
 export async function temasekWebApiFeaturesPokedexListEndpoint(config: Partial<RequestConfig> & { client?: Client } = {}) {
   const { client: request = fetch, ...requestConfig } = config
 
 
 
-  const res = await request<TemasekWebApiFeaturesPokedexListEndpointQueryResponse, ResponseErrorConfig<TemasekWebApiFeaturesPokedexListEndpoint401>, unknown>({ method : "GET", url : `/pokedex`, ... requestConfig })
+  const res = await request<TemasekWebApiFeaturesPokedexListEndpointQueryResponse, ResponseErrorConfig<TemasekWebApiFeaturesPokedexListEndpoint401>, unknown>({ method : "GET", url : `/api/pokedex`, ... requestConfig })
   return res.data
 }
 
@@ -40,7 +40,7 @@ export function temasekWebApiFeaturesPokedexListEndpointQueryOptions(config: Par
 }
 
 /**
- * {@link /pokedex}
+ * {@link /api/pokedex}
  */
 export function useTemasekWebApiFeaturesPokedexListEndpoint<TData = TemasekWebApiFeaturesPokedexListEndpointQueryResponse, TQueryData = TemasekWebApiFeaturesPokedexListEndpointQueryResponse, TQueryKey extends QueryKey = TemasekWebApiFeaturesPokedexListEndpointQueryKey>(options: 
 {
