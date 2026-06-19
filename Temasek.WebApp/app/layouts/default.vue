@@ -132,14 +132,16 @@ const groups = computed(() => [
 
     <UDashboardSearch :groups="groups" />
 
-    <slot />
-  </UDashboardGroup>
+    <ClerkLoaded>
+      <SignedIn>
+        <slot />
+      </SignedIn>
 
-  <ClerkLoaded>
-    <Show when="signed-out">
-      <div class="fixed inset-0 flex min-h-screen items-center justify-center bg-orange-50 p-4">
-        <SignIn />
-      </div>
-    </Show>
-  </ClerkLoaded>
+      <SignedOut>
+        <div class="flex flex-1 flex-col items-center justify-center p-4">
+          <SignIn />
+        </div>
+      </SignedOut>
+    </ClerkLoaded>
+  </UDashboardGroup>
 </template>

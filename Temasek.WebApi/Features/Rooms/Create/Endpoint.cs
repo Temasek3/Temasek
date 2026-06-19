@@ -1,9 +1,10 @@
 using FastEndpoints;
-using Temasek.WebApi.Features.Rooms.Signboard;
+using Temasek.WebApi.Entities;
+using Temasek.WebApi.Features.Rooms.Schedule;
 
 namespace Temasek.WebApi.Features.Rooms.Create;
 
-public class Endpoint(RoomSignboardStore store) : Endpoint<Request, Response>
+public class Endpoint(IFreeSql sql) : Endpoint<Request, Response>
 {
     public override void Configure()
     {
@@ -13,30 +14,41 @@ public class Endpoint(RoomSignboardStore store) : Endpoint<Request, Response>
 
     public override async Task HandleAsync(Request req, CancellationToken ct)
     {
-        var roomId = req.RoomId?.Trim() ?? string.Empty;
-
-        if (string.IsNullOrWhiteSpace(roomId))
+        var normalizedRoomId = RoomId.From(req.RoomId);
+        if (normalizedRoomId.IsEmpty)
         {
             AddError(r => r.RoomId, "Room ID is required.");
             await Send.ErrorsAsync(cancellation: ct);
             return;
         }
+        var existing = await sql.Select<Room>()
+            .Where(item => item.RoomId == normalizedRoomId)
+            .FirstAsync(ct);
 
-        var (room, created) = await store.CreateAsync(roomId, req.Name, ct);
-        if (!created)
+        if (existing is not null)
         {
             AddError(r => r.RoomId, "A room with this Room ID already exists.");
             await Send.ErrorsAsync(409, ct);
             return;
         }
 
+        var requestedName = RoomName.From(req.Name);
+        var roomEntity = new Room
+        {
+            RoomId = normalizedRoomId,
+            Name = !requestedName.IsEmpty ? requestedName : RoomName.From(normalizedRoomId.Value),
+            Schedule = RoomSchedule.Empty,
+            UpdatedAtUtc = DateTime.UtcNow,
+        };
+        await sql.Insert(roomEntity).ExecuteAffrowsAsync(ct);
+
         await Send.OkAsync(
             new Response
             {
-                RoomId = room.RoomId,
-                Name = room.Name,
-                ScheduleCount = room.Schedule.Count,
-                UpdatedAtUtc = room.UpdatedAtUtc,
+                RoomId = roomEntity.RoomId.Value,
+                Name = roomEntity.Name.Value,
+                ScheduleCount = roomEntity.Schedule.Count,
+                UpdatedAtUtc = roomEntity.UpdatedAtUtc,
             },
             ct
         );

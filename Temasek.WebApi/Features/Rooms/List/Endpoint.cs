@@ -1,9 +1,10 @@
 using FastEndpoints;
-using Temasek.WebApi.Features.Rooms.Signboard;
+using Temasek.WebApi.Entities;
+using Temasek.WebApi.Features.Rooms.Schedule;
 
 namespace Temasek.WebApi.Features.Rooms.List;
 
-public class Endpoint(RoomSignboardStore store) : EndpointWithoutRequest<IReadOnlyList<Response>>
+public class Endpoint(IFreeSql sql) : EndpointWithoutRequest<IReadOnlyList<Response>>
 {
     public override void Configure()
     {
@@ -13,12 +14,12 @@ public class Endpoint(RoomSignboardStore store) : EndpointWithoutRequest<IReadOn
 
     public override async Task HandleAsync(CancellationToken ct)
     {
-        var response = (await store.ListAsync(ct))
+        var response = (await sql.Select<Room>().OrderBy(item => item.Name).ToListAsync(ct))
             .Select(room => new Response
             {
-                RoomId = room.RoomId,
-                Name = room.Name,
-                ScheduleCount = room.ScheduleCount,
+                RoomId = room.RoomId.Value,
+                Name = room.DisplayName,
+                ScheduleCount = room.Schedule.Count,
                 UpdatedAtUtc = room.UpdatedAtUtc,
             })
             .ToArray();

@@ -30,6 +30,15 @@ public class Endpoint(
 
     public override async Task HandleAsync(Request req, CancellationToken ct)
     {
+        var normalizedNric = UserNric.From(req.Nric);
+        var normalizedName = UserName.From(req.Name);
+
+        if (normalizedNric.IsEmpty || normalizedName.IsEmpty)
+        {
+            await Send.ErrorsAsync(400, ct);
+            return;
+        }
+
         if (HttpContext.Request.Headers["X-API-KEY"] != formSgOptions.Value.CallbackApiKey)
         {
             await Send.UnauthorizedAsync(ct);
@@ -83,13 +92,13 @@ public class Endpoint(
                 .FirstAsync(ct);
 
         var nricMatchedUser = await sql.Select<User>()
-            .Where(existingUser => existingUser.Nric == req.Nric)
+            .Where(existingUser => existingUser.Nric == normalizedNric)
             .FirstAsync(ct);
 
         var localUser = nricMatchedUser ?? clerkAccountUser ?? new User();
 
-        localUser.Nric = req.Nric;
-        localUser.Name = req.Name;
+        localUser.Nric = normalizedNric;
+        localUser.Name = normalizedName;
 
         if (localUser.UserId == 0)
         {
@@ -118,8 +127,8 @@ public class Endpoint(
             {
                 PublicMetadata = new Dictionary<string, object>
                 {
-                    { "nric", req.Nric },
-                    { "name", req.Name },
+                    { "nric", normalizedNric.Value },
+                    { "name", normalizedName.Value },
                 },
             }
         );

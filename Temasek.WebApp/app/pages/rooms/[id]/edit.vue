@@ -1,17 +1,17 @@
 <script setup lang="ts">
 import type {
-  RoomSignboardSnapshot,
-  SignboardActivity,
-} from './signboard-helpers'
+  RoomScheduleSnapshot,
+  ScheduleActivity,
+} from './schedule-helpers'
 import type {
-  TemasekWebApiFeaturesRoomsSignboardContractsRoomSignboardResponse as RoomSignboardSnapshotContract,
-  TemasekWebApiFeaturesRoomsSignboardUpdateEndpointMutationRequest as RoomSignboardUpdateRequest,
+  TemasekWebApiFeaturesRoomsScheduleContractsRoomScheduleResponse as RoomScheduleSnapshotContract,
+  TemasekWebApiFeaturesRoomsScheduleUpdateEndpointMutationRequest as RoomScheduleUpdateRequest,
 } from '~/kubb'
 import { useQueryClient } from '@tanstack/vue-query'
 
 import {
-  useTemasekWebApiFeaturesRoomsSignboardGetEndpoint,
-  useTemasekWebApiFeaturesRoomsSignboardUpdateEndpoint,
+  useTemasekWebApiFeaturesRoomsScheduleGetEndpoint,
+  useTemasekWebApiFeaturesRoomsScheduleUpdateEndpoint,
 } from '~/kubb'
 import {
   createActivityId,
@@ -28,9 +28,9 @@ import {
   normalizeSchedule,
   sortSchedule,
   validateScheduleArray,
-} from './signboard-helpers'
+} from './schedule-helpers'
 
-interface SignboardFormState {
+interface ScheduleFormState {
   title: string
   start: string
   end: string
@@ -51,8 +51,8 @@ const queryClient = useQueryClient()
 const roomId = computed(() => String(route.params.id))
 const encodedRoomId = computed(() => encodeURIComponent(roomId.value))
 const apiBaseUrl = computed(() => String(runtimeConfig.public.temasekWebApiHttps ?? '').trim())
-const roomState = ref<RoomSignboardSnapshot | null>(null)
-const roomQuery = useTemasekWebApiFeaturesRoomsSignboardGetEndpoint(encodedRoomId, {
+const roomState = ref<RoomScheduleSnapshot | null>(null)
+const roomQuery = useTemasekWebApiFeaturesRoomsScheduleGetEndpoint(encodedRoomId, {
   client: {
     auth: 'none',
   },
@@ -61,7 +61,7 @@ const roomQuery = useTemasekWebApiFeaturesRoomsSignboardGetEndpoint(encodedRoomI
     refetchOnWindowFocus: false,
   },
 })
-const roomUpdateMutation = useTemasekWebApiFeaturesRoomsSignboardUpdateEndpoint({
+const roomUpdateMutation = useTemasekWebApiFeaturesRoomsScheduleUpdateEndpoint({
   client: {
     auth: 'none',
   },
@@ -77,7 +77,7 @@ const jsonEditorError = ref('')
 const formDirty = ref(false)
 const jsonDirty = ref(false)
 
-const form = reactive<SignboardFormState>({
+const form = reactive<ScheduleFormState>({
   title: '',
   start: '09:00',
   end: '10:00',
@@ -87,14 +87,14 @@ const form = reactive<SignboardFormState>({
 
 let tickIntervalId: number | null = null
 
-const roomStreamUrl = computed(() => buildApiUrl(`${getSignboardPath(roomId.value)}/stream`))
+const roomStreamUrl = computed(() => buildApiUrl(`${getSchedulePath(roomId.value)}/stream`))
 const {
   data: roomStreamData,
   close: stopRoomStream,
   open: startRoomStream,
-} = useEventSource<string[], RoomSignboardSnapshotContract>(
+} = useEventSource<string[], RoomScheduleSnapshotContract>(
   roomStreamUrl,
-  ['signboard'],
+  ['schedule'],
   {
     immediate: false,
     autoConnect: false,
@@ -103,7 +103,7 @@ const {
       delay: 1000,
     },
     serializer: {
-      read: value => JSON.parse(value ?? 'null') as RoomSignboardSnapshotContract,
+      read: value => JSON.parse(value ?? 'null') as RoomScheduleSnapshotContract,
     },
   },
 )
@@ -176,15 +176,15 @@ const primaryCountdownText = computed(() => formatEndsIn(primaryActivity.value, 
 const primaryMetaItems = computed(() => primaryActivity.value ? getMetaItems(primaryActivity.value) : [])
 const seatingAlertMessage = computed(() => getSeatingAlertMessage(renderedNext.value, now.value))
 
-function getSignboardPath(targetRoomId: string = roomId.value) {
-  return `/api/rooms/${encodeURIComponent(targetRoomId)}/signboard`
+function getSchedulePath(targetRoomId: string = roomId.value) {
+  return `/api/rooms/${encodeURIComponent(targetRoomId)}/schedule`
 }
 
 function buildApiUrl(path: string) {
   return ABSOLUTE_URL_PATTERN.test(apiBaseUrl.value) ? new URL(path, apiBaseUrl.value).toString() : path
 }
 
-function createEmptyForm(sourceSchedule: SignboardActivity[] = sortedSchedule.value): SignboardFormState {
+function createEmptyForm(sourceSchedule: ScheduleActivity[] = sortedSchedule.value): ScheduleFormState {
   const start = getSuggestedStartTime(sourceSchedule)
 
   return {
@@ -196,7 +196,7 @@ function createEmptyForm(sourceSchedule: SignboardActivity[] = sortedSchedule.va
   }
 }
 
-function assignForm(next: SignboardFormState, dirty = false) {
+function assignForm(next: ScheduleFormState, dirty = false) {
   form.title = next.title
   form.start = next.start
   form.end = next.end
@@ -304,7 +304,7 @@ function resetJsonEditor() {
   saveSuccess.value = ''
 }
 
-function applyRoomSnapshot(snapshot: Partial<RoomSignboardSnapshotContract> | null | undefined, targetRoomId: string = roomId.value) {
+function applyRoomSnapshot(snapshot: Partial<RoomScheduleSnapshotContract> | null | undefined, targetRoomId: string = roomId.value) {
   roomState.value = {
     roomId: String(snapshot?.roomId ?? targetRoomId),
     name: String(snapshot?.name ?? targetRoomId),
@@ -333,12 +333,12 @@ function syncRoomChannel(targetRoomId: string = roomId.value) {
   }
 }
 
-async function saveSnapshot(nextSchedule: SignboardActivity[]) {
+async function saveSnapshot(nextSchedule: ScheduleActivity[]) {
   saveError.value = ''
   jsonEditorError.value = ''
 
   try {
-    const payload: RoomSignboardUpdateRequest = {
+    const payload: RoomScheduleUpdateRequest = {
       name: roomState.value?.name ?? roomId.value,
       schedule: sortSchedule(nextSchedule),
     }
@@ -356,7 +356,7 @@ async function saveSnapshot(nextSchedule: SignboardActivity[]) {
     return true
   }
   catch {
-    saveError.value = 'Unable to save signboard changes right now.'
+    saveError.value = 'Unable to save Schedule changes right now.'
     return false
   }
 }
@@ -532,7 +532,7 @@ onBeforeUnmount(() => {
 
         <div class="flex flex-wrap gap-3">
           <UButton :to="displayPath" color="neutral" variant="subtle">
-            View signboard
+            View Schedule
           </UButton>
           <UButton color="neutral" variant="subtle" :disabled="isSaving" @click="prepareNewActivityForm">
             New activity

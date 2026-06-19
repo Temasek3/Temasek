@@ -1,5 +1,8 @@
 {
   "appHost": {
     "path": "Temasek.AppHost/Temasek.AppHost.csproj"
+  },
+  "features": {
+    "defaultWatchEnabled": true
   }
 }

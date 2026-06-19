@@ -5,10 +5,13 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Options;
 using Scalar.AspNetCore;
+using Temasek_WebApi;
+using Temasek.WebApi;
 using Temasek.WebApi.Clerk;
+using Temasek.WebApi.Entities;
 using Temasek.WebApi.Features.Facilities;
 using Temasek.WebApi.Features.FormSg;
-using Temasek.WebApi.Features.Rooms.Signboard;
+using Temasek.WebApi.Features.Rooms.Schedule;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,8 +23,11 @@ builder
     .Services.AddOptions<FacilitiesOptions>()
     .Bind(builder.Configuration.GetSection("Facilities"));
 builder
-    .Services.AddOptions<RoomSignboardEventBusOptions>()
-    .Bind(builder.Configuration.GetSection("RoomSignboardEventBus"));
+    .Services.AddOptions<RoomScheduleEventBusOptions>()
+    .Bind(builder.Configuration.GetSection("RoomScheduleEventBus"));
+
+builder.Services.AddUserTypeHandlers();
+builder.Services.AddRoomTypeHandlers();
 
 builder.Services.AddSingleton(sp =>
 {
@@ -37,8 +43,7 @@ builder.Services.AddSingleton(sp =>
         .Build();
 });
 
-builder.Services.AddSingleton<RoomSignboardEventBus>();
-builder.Services.AddScoped<RoomSignboardStore>();
+builder.Services.AddSingleton<RoomScheduleEventBus>();
 
 builder.Services.AddScoped(sp => new ClerkBackendApi(
     bearerAuth: sp.GetRequiredService<IOptions<ClerkOptions>>().Value.SecretKey
@@ -69,7 +74,10 @@ builder
     );
 builder.Services.AddAuthorization();
 
-builder.Services.AddFastEndpoints();
+builder.Services.AddFastEndpoints(o =>
+{
+    o.SourceGeneratorDiscoveredTypes.AddRange(DiscoveredTypes.All);
+});
 builder.Services.SwaggerDocument(options =>
 {
     options.DocumentSettings = d =>
@@ -103,6 +111,7 @@ app.UseAuthorization();
 app.UseFastEndpoints(config =>
 {
     config.Endpoints.RoutePrefix = "api";
+    config.Serializer.Options.AddSerializerContextsFromTemasek_WebApi();
 });
 app.UseSwaggerGen(options =>
 {

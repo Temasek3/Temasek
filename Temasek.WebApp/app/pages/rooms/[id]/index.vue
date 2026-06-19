@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import type { RoomSignboardSnapshot } from './signboard-helpers'
-import type { TemasekWebApiFeaturesRoomsSignboardContractsRoomSignboardResponse as RoomSignboardSnapshotContract } from '~/kubb'
+import type { RoomScheduleSnapshot } from './schedule-helpers'
+import type { TemasekWebApiFeaturesRoomsScheduleContractsRoomScheduleResponse as RoomScheduleSnapshotContract } from '~/kubb'
 
-import { useTemasekWebApiFeaturesRoomsSignboardGetEndpoint } from '~/kubb'
+import { useTemasekWebApiFeaturesRoomsScheduleGetEndpoint } from '~/kubb'
 import {
   formatEndsIn,
   getActivitiesAfterNext,
@@ -11,7 +11,7 @@ import {
   getSeatingAlertMessage,
   normalizeSchedule,
   sortSchedule,
-} from './signboard-helpers'
+} from './schedule-helpers'
 
 definePageMeta({
   layout: 'rooms',
@@ -25,7 +25,7 @@ const runtimeConfig = useRuntimeConfig()
 const roomId = computed(() => String(route.params.id))
 const encodedRoomId = computed(() => encodeURIComponent(roomId.value))
 const apiBaseUrl = computed(() => String(runtimeConfig.public.temasekWebApiHttps ?? '').trim())
-const roomQuery = useTemasekWebApiFeaturesRoomsSignboardGetEndpoint(encodedRoomId, {
+const roomQuery = useTemasekWebApiFeaturesRoomsScheduleGetEndpoint(encodedRoomId, {
   client: {
     auth: 'none',
   },
@@ -43,16 +43,16 @@ const clockTime = ref<HTMLElement | null>(null)
 const currentTitle = ref<HTMLElement | null>(null)
 const nextTitle = ref<HTMLElement | null>(null)
 
-const roomState = ref<RoomSignboardSnapshot>(createRoomSnapshot())
+const roomState = ref<RoomScheduleSnapshot>(createRoomSnapshot())
 
-const roomStreamUrl = computed(() => buildApiUrl(`${getSignboardPath(roomId.value)}/stream`))
+const roomStreamUrl = computed(() => buildApiUrl(`${getSchedulePath(roomId.value)}/stream`))
 const {
   data: roomStreamData,
   close: stopRoomStream,
   open: startRoomStream,
-} = useEventSource<string[], RoomSignboardSnapshotContract>(
+} = useEventSource<string[], RoomScheduleSnapshotContract>(
   roomStreamUrl,
-  ['signboard'],
+  ['schedule'],
   {
     immediate: false,
     autoConnect: false,
@@ -61,7 +61,7 @@ const {
       delay: 1000,
     },
     serializer: {
-      read: value => JSON.parse(value ?? 'null') as RoomSignboardSnapshotContract,
+      read: value => JSON.parse(value ?? 'null') as RoomScheduleSnapshotContract,
     },
   },
 )
@@ -140,15 +140,15 @@ const layoutSignature = computed(() => [
   nextMetaItems.value.map(item => `${item.key}:${item.value}`).join('|'),
 ].join('||'))
 
-function getSignboardPath(targetRoomId: string = roomId.value) {
-  return `/api/rooms/${encodeURIComponent(targetRoomId)}/signboard`
+function getSchedulePath(targetRoomId: string = roomId.value) {
+  return `/api/rooms/${encodeURIComponent(targetRoomId)}/schedule`
 }
 
 function buildApiUrl(path: string) {
   return ABSOLUTE_URL_PATTERN.test(apiBaseUrl.value) ? new URL(path, apiBaseUrl.value).toString() : path
 }
 
-function createRoomSnapshot(snapshot: Partial<RoomSignboardSnapshotContract> | null | undefined = null, targetRoomId: string = roomId.value): RoomSignboardSnapshot {
+function createRoomSnapshot(snapshot: Partial<RoomScheduleSnapshotContract> | null | undefined = null, targetRoomId: string = roomId.value): RoomScheduleSnapshot {
   return {
     roomId: String(snapshot?.roomId ?? targetRoomId),
     name: String(snapshot?.name ?? targetRoomId),
@@ -157,11 +157,11 @@ function createRoomSnapshot(snapshot: Partial<RoomSignboardSnapshotContract> | n
   }
 }
 
-function applyRoomSnapshot(snapshot: Partial<RoomSignboardSnapshotContract> | null | undefined, targetRoomId: string = roomId.value) {
+function applyRoomSnapshot(snapshot: Partial<RoomScheduleSnapshotContract> | null | undefined, targetRoomId: string = roomId.value) {
   roomState.value = createRoomSnapshot(snapshot, targetRoomId)
 }
 
-function isActiveRoomSnapshot(snapshot: Partial<RoomSignboardSnapshotContract> | null | undefined) {
+function isActiveRoomSnapshot(snapshot: Partial<RoomScheduleSnapshotContract> | null | undefined) {
   if (!snapshot) {
     return false
   }

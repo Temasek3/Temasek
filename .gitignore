@@ -9,3 +9,5 @@ riderModule.iml
 *.csproj.user
 node_modules/
 .vs/
+.dotnet/
+.verify/
